@@ -1,0 +1,47 @@
+# ============================================================
+# SIGEDOC - Docker Compose
+# Versión: 2.2.6
+# ============================================================
+services:
+
+  # ── Aplicación PHP + Apache ────────────────────────────────
+  sigedoc:
+    image: sigedoc_app:${APP_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: sigedoc_app
+    restart: unless-stopped
+    networks:
+      - sigedoc_net
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      # Persistencia de documentos y logs fuera del contenedor
+      - sigedoc_documentos:/var/www/html/storage/documentos
+      - sigedoc_keys:/var/www/html/storage/keys
+      - sigedoc_logs:/var/www/html/storage/logs
+
+    labels:
+      - "com.sigedoc.service=app"
+      - "com.sigedoc.version=2.2.6"
+
+# ── Volúmenes persistentes ─────────────────────────────────
+volumes:
+  sigedoc_documentos:
+    driver: local
+  sigedoc_keys:
+    driver: local
+  sigedoc_logs:
+    driver: local
+
+# ── Redes personalizadas ───────────────────────────────────
+networks:
+  sigedoc_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.200.0/24

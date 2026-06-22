@@ -1,0 +1,33 @@
+# SIGEDOC - Archivos a ignorar en control de versiones
+
+# Configuración local
+config.php
+.env
+
+# Directorios de almacenamiento
+storage/documentos/*
+storage/keys/*
+!storage/documentos/.gitkeep
+!storage/keys/.gitkeep
+
+# Logs
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporal
+*.tmp
+*.bak
+*~
+
+# Desarrollo y Pruebas
+scratch/
+maintenance/
+

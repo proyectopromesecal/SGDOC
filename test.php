@@ -1,0 +1,1 @@
+<?php $dsn = 'sqlsrv:Server=172.125.70.73;Encrypt=no;TrustServerCertificate=yes;Database=sigedoc;LoginTimeout=10'; try { $pdo = new PDO($dsn, 'usigedoc', '5VT8DF4qeCqmaBqos5%&Ge#a@'); echo 'SUCCESS'; } catch (PDOException $e) { echo 'ERROR: ' . $e->getMessage(); }

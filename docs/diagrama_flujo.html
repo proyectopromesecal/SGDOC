@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEDOC - Diagrama de Flujo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e1a;
+            color: #e0e6f0;
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        .header {
+            background: linear-gradient(135deg, #007281 0%, #005a66 50%, #003d47 100%);
+            padding: 30px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, .3)
+        }
+
+        .header p {
+            opacity: .85;
+            margin-top: 8px;
+            font-size: .95rem;
+            position: relative;
+            z-index: 1
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            background: #0d1225;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 10px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: .85rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, .08);
+            background: rgba(255, 255, 255, .03);
+            transition: all .3s;
+            color: #8892a8
+        }
+
+        .tab:hover {
+            background: rgba(0, 114, 129, .15);
+            color: #4dd9e8;
+            border-color: rgba(0, 114, 129, .3)
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #007281, #009dad);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(0, 114, 129, .4)
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px
+        }
+
+        .diagram {
+            display: none;
+            animation: fadeIn .4s ease
+        }
+
+        .diagram.active {
+            display: block
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 30px rgba(0, 0, 0, .3))
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(255, 255, 255, .03);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, .06);
+            margin-top: 25px;
+            justify-content: center
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .8rem;
+            color: #8892a8
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #4a5270;
+            font-size: .8rem
+        }
+
+        /* Node styles within SVG */
+        text {
+            font-family: 'Inter', sans-serif
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>📄 SIGEDOC — Diagrama de Flujo</h1>
+        <p>Sistema Integrado de Gestión Documental · PROMESE/CAL</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showDiagram('arch')">🏗️ Arquitectura MVC</div>
+        <div class="tab" onclick="showDiagram('doc')">📋 Ciclo de Vida del Documento</div>
+        <div class="tab" onclick="showDiagram('auth')">🔐 Autenticación</div>
+        <div class="tab" onclick="showDiagram('roles')">👥 Roles y Permisos</div>
+        <div class="tab" onclick="showDiagram('routes')">🌐 Mapa de Rutas</div>
+        <div class="tab" onclick="showDiagram('updates')">🚀 Actualizaciones Recientes</div>
+    </div>
+
+    <div class="container">
+
+        <!-- ==================== ARQUITECTURA MVC ==================== -->
+        <div class="diagram active" id="arch">
+            <svg viewBox="0 0 1100 680" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#007281" />
+                        <stop offset="100%" stop-color="#00a3b5" />
+                    </linearGradient>
+                    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#6c3fb5" />
+                        <stop offset="100%" stop-color="#9b6dff" />
+                    </linearGradient>
+                    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2d7d46" />
+                        <stop offset="100%" stop-color="#4caf50" />
+                    </linearGradient>
+                    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#b5592d" />
+                        <stop offset="100%" stop-color="#e88a5e" />
+                    </linearGradient>
+                    <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#8b6914" />
+                        <stop offset="100%" stop-color="#d4a93a" />
+                    </linearGradient>
+                    <filter id="shadow">
+                        <feDropShadow dx="0" dy="3" stdDeviation="6" flood-opacity="0.3" />
+                    </filter>
+                    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#4dd9e8" />
+                    </marker>
+                    <marker id="arrowG" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#4caf50" />
+                    </marker>
+                    <marker id="arrowP" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#9b6dff" />
+                    </marker>
+                </defs>
+                <!-- Background -->
+                <rect width="1100" height="680" rx="16" fill="#111827" />
+                <!-- Title -->
+                <text x="550" y="38" text-anchor="middle" fill="#e0e6f0" font-size="18" font-weight="700">Arquitectura
+                    MVC — SIGEDOC</text>
+                <!-- Entry Point -->
+                <rect x="430" y="60" width="240" height="44" rx="22" fill="url(#g1)" filter="url(#shadow)" />
+                <text x="550" y="87" text-anchor="middle" fill="#fff" font-size="13" font-weight="600">🌐
+                    public/index.php (Front Controller)</text>
+                <!-- Arrow to Router -->
+                <line x1="550" y1="104" x2="550" y2="140" stroke="#4dd9e8" stroke-width="2" marker-end="url(#arrow)" />
+                <!-- Router -->
+                <rect x="440" y="140" width="220" height="40" rx="10" fill="url(#g5)" filter="url(#shadow)" />
+                <text x="550" y="165" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">⚡
+                    Core/Router.php</text>
+                <!-- Arrow to Controllers -->
+                <line x1="550" y1="180" x2="550" y2="220" stroke="#4dd9e8" stroke-width="2" marker-end="url(#arrow)" />
+                <!-- Controllers Group -->
+                <rect x="60" y="220" width="980" height="185" rx="12" fill="rgba(108,63,181,0.08)" stroke="#6c3fb5"
+                    stroke-width="1" stroke-dasharray="6,3" />
+                <text x="80" y="245" fill="#9b6dff" font-size="11" font-weight="700">CONTROLLERS</text>
+                <!-- Individual Controllers -->
+                <rect x="80" y="260" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="157" y="282" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">AuthController</text>
+                <text x="157" y="305" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">login · logout ·
+                    permisos</text>
+                <rect x="255" y="260" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="332" y="282" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">DocumentoController</text>
+                <text x="332" y="305" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">CRUD · aprobar ·
+                    firmar</text>
+                <rect x="430" y="260" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="507" y="282" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">DashboardController</text>
+                <text x="507" y="305" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">estadísticas ·
+                    resumen</text>
+                <rect x="605" y="260" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="682" y="282" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">UsuarioController</text>
+                <text x="682" y="305" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">CRUD · firma
+                    digital</text>
+                <rect x="780" y="260" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="857" y="282" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">NotificacionCtrl</text>
+                <text x="857" y="305" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">AJAX · marcar
+                    leída</text>
+                <!-- Row 2 Controllers -->
+                <rect x="170" y="335" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="247" y="357" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">BitacoraController</text>
+                <text x="247" y="380" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">auditoría ·
+                    filtros</text>
+                <rect x="345" y="335" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="422" y="357" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">ConfiguracionCtrl</text>
+                <text x="422" y="380" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">rutas ·
+                    extensiones</text>
+                <rect x="520" y="335" width="155" height="55" rx="8" fill="url(#g2)" filter="url(#shadow)" />
+                <text x="597" y="357" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">PermisoController</text>
+                <text x="597" y="380" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">matriz
+                    roles/permisos</text>
+                <!-- Arrows Controllers → Models -->
+                <line x1="332" y1="315" x2="332" y2="430" stroke="#9b6dff" stroke-width="2" marker-end="url(#arrowP)"
+                    stroke-dasharray="5,3" />
+                <line x1="550" y1="390" x2="550" y2="430" stroke="#9b6dff" stroke-width="2" marker-end="url(#arrowP)" />
+                <line x1="682" y1="315" x2="682" y2="430" stroke="#9b6dff" stroke-width="2" marker-end="url(#arrowP)"
+                    stroke-dasharray="5,3" />
+                <!-- Models Group -->
+                <rect x="60" y="430" width="680" height="100" rx="12" fill="rgba(45,125,70,0.08)" stroke="#2d7d46"
+                    stroke-width="1" stroke-dasharray="6,3" />
+                <text x="80" y="455" fill="#4caf50" font-size="11" font-weight="700">MODELS</text>
+                <rect x="80" y="468" width="100" height="48" rx="8" fill="url(#g3)" filter="url(#shadow)" />
+                <text x="130" y="496" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">Documento</text>
+                <rect x="195" y="468" width="100" height="48" rx="8" fill="url(#g3)" filter="url(#shadow)" />
+                <text x="245" y="496" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">Usuario</text>
+                <rect x="310" y="468" width="100" height="48" rx="8" fill="url(#g3)" filter="url(#shadow)" />
+                <text x="360" y="496" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">Bitacora</text>
+                <rect x="425" y="468" width="100" height="48" rx="8" fill="url(#g3)" filter="url(#shadow)" />
+                <text x="475" y="496" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">Notificacion</text>
+                <rect x="540" y="468" width="80" height="48" rx="8" fill="url(#g3)" filter="url(#shadow)" />
+                <text x="580" y="496" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">Rol</text>
+                <rect x="635" y="468" width="90" height="48" rx="8" fill="url(#g3)" filter="url(#shadow)" />
+                <text x="680" y="496" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">Permiso</text>
+                <!-- Core -->
+                <rect x="780" y="430" width="260" height="100" rx="12" fill="rgba(181,89,45,0.08)" stroke="#b5592d"
+                    stroke-width="1" stroke-dasharray="6,3" />
+                <text x="800" y="455" fill="#e88a5e" font-size="11" font-weight="700">CORE</text>
+                <rect x="800" y="468" width="105" height="48" rx="8" fill="url(#g4)" filter="url(#shadow)" />
+                <text x="852" y="496" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">Database</text>
+                <rect x="920" y="468" width="105" height="48" rx="8" fill="url(#g4)" filter="url(#shadow)" />
+                <text x="972" y="496" text-anchor="middle" fill="#fff" font-size="10"
+                    font-weight="600">FirmaDigital</text>
+                <!-- Arrow Models → DB -->
+                <line x1="400" y1="530" x2="400" y2="570" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowG)" />
+                <!-- Database -->
+                <rect x="300" y="575" width="200" height="50" rx="25" fill="linear-gradient(135deg,#1a365d,#2a4a7f)"
+                    stroke="#4dd9e8" stroke-width="1.5" filter="url(#shadow)" />
+                <text x="400" y="605" text-anchor="middle" fill="#4dd9e8" font-size="13" font-weight="700">🗄️ SQL
+                    Server</text>
+                <!-- Views -->
+                <rect x="780" y="570" width="260" height="80" rx="12" fill="rgba(139,105,20,0.08)" stroke="#8b6914"
+                    stroke-width="1" stroke-dasharray="6,3" />
+                <text x="800" y="595" fill="#d4a93a" font-size="11" font-weight="700">VIEWS (PHP Templates)</text>
+                <text x="800" y="615" fill="rgba(212,169,58,.7)" font-size="9">auth/ · dashboard/ · documentos/</text>
+                <text x="800" y="632" fill="rgba(212,169,58,.7)" font-size="9">usuarios/ · bitacora/ · configuracion/ ·
+                    partials/</text>
+            </svg>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background:linear-gradient(135deg,#007281,#00a3b5)"></div>Entry
+                    Point / Router
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:linear-gradient(135deg,#6c3fb5,#9b6dff)"></div>
+                    Controllers
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:linear-gradient(135deg,#2d7d46,#4caf50)"></div>Models
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:linear-gradient(135deg,#b5592d,#e88a5e)"></div>Core
+                    Components
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:linear-gradient(135deg,#8b6914,#d4a93a)"></div>Views
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CICLO DE VIDA ==================== -->
+        <div class="diagram" id="doc">
+            <svg viewBox="0 0 1100 750" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="dg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2563eb" />
+                        <stop offset="100%" stop-color="#60a5fa" />
+                    </linearGradient>
+                    <linearGradient id="dg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#007281" />
+                        <stop offset="100%" stop-color="#00bcd4" />
+                    </linearGradient>
+                    <linearGradient id="dg3" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#7c3aed" />
+                        <stop offset="100%" stop-color="#a78bfa" />
+                    </linearGradient>
+                    <linearGradient id="dg4" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#059669" />
+                        <stop offset="100%" stop-color="#34d399" />
+                    </linearGradient>
+                    <linearGradient id="dg5" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#dc2626" />
+                        <stop offset="100%" stop-color="#f87171" />
+                    </linearGradient>
+                    <linearGradient id="dg6" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#d97706" />
+                        <stop offset="100%" stop-color="#fbbf24" />
+                    </linearGradient>
+                    <marker id="a2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0,10 3.5,0 7" fill="#60a5fa" />
+                    </marker>
+                    <marker id="a3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0,10 3.5,0 7" fill="#34d399" />
+                    </marker>
+                    <marker id="a4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0,10 3.5,0 7" fill="#f87171" />
+                    </marker>
+                    <marker id="a5" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0,10 3.5,0 7" fill="#fbbf24" />
+                    </marker>
+                </defs>
+                <rect width="1100" height="750" rx="16" fill="#111827" />
+                <text x="550" y="38" text-anchor="middle" fill="#e0e6f0" font-size="18" font-weight="700">Ciclo de Vida
+                    del Documento</text>
+                <!-- Step 1: Crear -->
+                <rect x="420" y="60" width="260" height="55" rx="12" fill="url(#dg1)" filter="url(#shadow)" />
+                <text x="550" y="83" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">📝 1. CREAR
+                    DOCUMENTO</text>
+                <text x="550" y="102" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="9">Solicitante sube
+                    archivo + descripción</text>
+                <line x1="550" y1="115" x2="550" y2="155" stroke="#60a5fa" stroke-width="2.5" marker-end="url(#a2)" />
+                <!-- Step 2: Solicitado -->
+                <rect x="420" y="160" width="260" height="55" rx="12" fill="url(#dg2)" filter="url(#shadow)" />
+                <text x="550" y="183" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">📌
+                    SOLICITADO</text>
+                <text x="550" y="202" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="9">Estado inicial del
+                    documento</text>
+                <!-- Branch: Compras revisa -->
+                <line x1="550" y1="215" x2="550" y2="265" stroke="#60a5fa" stroke-width="2.5" marker-end="url(#a2)" />
+                <text x="565" y="245" fill="#60a5fa" font-size="9" font-weight="600">Compras revisa ▼</text>
+                <!-- Decision diamond -->
+                <polygon points="550,270 650,310 550,350 450,310" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5" />
+                <text x="550" y="314" text-anchor="middle" fill="#60a5fa" font-size="11"
+                    font-weight="600">¿Aprueba?</text>
+                <!-- YES: Aprobado -->
+                <line x1="650" y1="310" x2="770" y2="310" stroke="#34d399" stroke-width="2.5" marker-end="url(#a3)" />
+                <text x="700" y="302" fill="#34d399" font-size="9" font-weight="600">SÍ ✓</text>
+                <rect x="775" y="285" width="260" height="55" rx="12" fill="url(#dg2)" filter="url(#shadow)" />
+                <text x="905" y="308" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">✅
+                    APROBADO_COMPRAS</text>
+                <text x="905" y="327" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="9">Firma digital
+                    aplicada (OpenSSL)</text>
+                <!-- NO: Devuelto -->
+                <line x1="450" y1="310" x2="330" y2="310" stroke="#fbbf24" stroke-width="2.5" marker-end="url(#a5)" />
+                <text x="390" y="302" fill="#fbbf24" font-size="9" font-weight="600">NO ✗</text>
+                <rect x="70" y="285" width="255" height="55" rx="12" fill="url(#dg6)" filter="url(#shadow)" />
+                <text x="197" y="308" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">🔄 DEVUELTO (→
+                    SOLICITADO)</text>
+                <text x="197" y="327" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="9">Con comentario de
+                    Compras</text>
+                <!-- Arrow devuelto back to solicitado -->
+                <path d="M 197 285 L 197 195 L 420 195" fill="none" stroke="#fbbf24" stroke-width="1.5"
+                    stroke-dasharray="6,3" marker-end="url(#a5)" />
+                <text x="260" y="190" fill="#fbbf24" font-size="8" font-weight="600">Solicitante edita y reenvía</text>
+                <!-- Gerencia revisa -->
+                <line x1="905" y1="340" x2="905" y2="400" stroke="#60a5fa" stroke-width="2.5" marker-end="url(#a2)" />
+                <text x="920" y="375" fill="#60a5fa" font-size="9" font-weight="600">Gerencia revisa ▼</text>
+                <!-- Decision 2 -->
+                <polygon points="905,405 1005,445 905,485 805,445" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5" />
+                <text x="905" y="449" text-anchor="middle" fill="#a78bfa" font-size="11"
+                    font-weight="600">¿Autoriza?</text>
+                <!-- YES: Autorizado -->
+                <line x1="905" y1="485" x2="905" y2="535" stroke="#34d399" stroke-width="2.5" marker-end="url(#a3)" />
+                <text x="920" y="515" fill="#34d399" font-size="9" font-weight="600">SÍ ✓</text>
+                <rect x="775" y="540" width="260" height="55" rx="12" fill="url(#dg4)" filter="url(#shadow)" />
+                <text x="905" y="563" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">🏆
+                    AUTORIZADO</text>
+                <text x="905" y="582" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="9">Proceso finalizado
+                    ✔</text>
+                <!-- NO: Observación -->
+                <line x1="805" y1="445" x2="615" y2="445" stroke="#fbbf24" stroke-width="2.5" marker-end="url(#a5)" />
+                <text x="710" y="438" fill="#fbbf24" font-size="9" font-weight="600">Observa</text>
+                <rect x="370" y="420" width="240" height="55" rx="12" fill="url(#dg6)" filter="url(#shadow)" />
+                <text x="490" y="443" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">👁️
+                    OBSERVACIÓN</text>
+                <text x="490" y="462" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="9">Se agrega nota sin
+                    cambiar estado</text>
+                <!-- Rechazar general -->
+                <line x1="1005" y1="445" x2="1060" y2="445" stroke="#f87171" stroke-width="2" marker-end="url(#a4)" />
+                <rect x="775" y="620" width="260" height="50" rx="12" fill="url(#dg5)" filter="url(#shadow)" />
+                <text x="905" y="650" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">❌
+                    RECHAZADO</text>
+                <line x1="1060" y1="445" x2="1060" y2="645" stroke="#f87171" stroke-width="1.5"
+                    stroke-dasharray="5,3" />
+                <line x1="1060" y1="645" x2="1040" y2="645" stroke="#f87171" stroke-width="1.5" marker-end="url(#a4)" />
+                <text x="1065" y="545" fill="#f87171" font-size="8" font-weight="600"
+                    transform="rotate(90,1065,545)">Rechaza</text>
+                <!-- Digitalizado flow -->
+                <rect x="70" y="520" width="255" height="55" rx="12" fill="url(#dg3)" filter="url(#shadow)" />
+                <text x="197" y="543" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">📷
+                    DIGITALIZADO</text>
+                <text x="197" y="562" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="9">Flujo alternativo:
+                    Digitalizador</text>
+                <text x="197" y="510" fill="#a78bfa" font-size="9" font-weight="500">Módulo de escaneo directo</text>
+                <!-- Notificaciones -->
+                <rect x="70" y="630" width="600" height="85" rx="12" fill="rgba(255,255,255,.03)"
+                    stroke="rgba(255,255,255,.08)" stroke-width="1" />
+                <text x="90" y="655" fill="#fbbf24" font-size="11" font-weight="700">🔔 Notificaciones automáticas en
+                    cada cambio de estado:</text>
+                <text x="90" y="675" fill="rgba(255,255,255,.5)" font-size="9">• Aprobado → Notifica a Solicitante +
+                    Gerencia + Admin</text>
+                <text x="90" y="690" fill="rgba(255,255,255,.5)" font-size="9">• Autorizado → Notifica a Solicitante +
+                    Admin</text>
+                <text x="90" y="705" fill="rgba(255,255,255,.5)" font-size="9">• Devuelto/Observado/Rechazado → Notifica
+                    a Solicitante (+ Compras si es Gerencia)</text>
+            </svg>
+        </div>
+
+        <!-- ==================== AUTENTICACIÓN ==================== -->
+        <div class="diagram" id="auth">
+            <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="aw" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0,10 3.5,0 7" fill="#60a5fa" />
+                    </marker>
+                </defs>
+                <rect width="900" height="580" rx="16" fill="#111827" />
+                <text x="450" y="38" text-anchor="middle" fill="#e0e6f0" font-size="18" font-weight="700">Flujo de
+                    Autenticación y Sesión</text>
+                <!-- User -->
+                <ellipse cx="450" cy="80" rx="60" ry="25" fill="url(#dg1)" />
+                <text x="450" y="85" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">👤 Usuario</text>
+                <line x1="450" y1="105" x2="450" y2="145" stroke="#60a5fa" stroke-width="2" marker-end="url(#aw)" />
+                <!-- Login Form -->
+                <rect x="350" y="150" width="200" height="45" rx="10" fill="url(#dg2)" />
+                <text x="450" y="178" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">📋 Formulario
+                    Login</text>
+                <line x1="450" y1="195" x2="450" y2="230" stroke="#60a5fa" stroke-width="2" marker-end="url(#aw)" />
+                <!-- POST /login -->
+                <rect x="345" y="235" width="210" height="40" rx="8" fill="#1e293b" stroke="#60a5fa" stroke-width="1" />
+                <text x="450" y="260" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="600">POST /login →
+                    AuthController</text>
+                <line x1="450" y1="275" x2="450" y2="310" stroke="#60a5fa" stroke-width="2" marker-end="url(#aw)" />
+                <!-- Decision -->
+                <polygon points="450,315 550,350 450,385 350,350" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5" />
+                <text x="450" y="354" text-anchor="middle" fill="#fbbf24" font-size="10"
+                    font-weight="600">¿Válido?</text>
+                <!-- NO -->
+                <line x1="350" y1="350" x2="200" y2="350" stroke="#f87171" stroke-width="2" marker-end="url(#a4)" />
+                <rect x="60" y="330" width="135" height="40" rx="8" fill="url(#dg5)" />
+                <text x="127" y="355" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">❌ Error
+                    login</text>
+                <path d="M 127 330 L 127 178 L 350 178" fill="none" stroke="#f87171" stroke-width="1.5"
+                    stroke-dasharray="5,3" marker-end="url(#a4)" />
+                <!-- YES -->
+                <line x1="550" y1="350" x2="690" y2="350" stroke="#34d399" stroke-width="2" marker-end="url(#a3)" />
+                <text x="615" y="342" fill="#34d399" font-size="9" font-weight="600">SÍ ✓</text>
+                <rect x="695" y="320" width="185" height="60" rx="10" fill="url(#dg4)" />
+                <text x="787" y="343" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">✅ Sesión
+                    Creada</text>
+                <text x="787" y="358" text-anchor="middle" fill="rgba(255,255,255,.7)"
+                    font-size="8">$_SESSION[usuario_id]</text>
+                <text x="787" y="370" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8">$_SESSION[rol ·
+                    permisos]</text>
+                <!-- Arrow to Dashboard -->
+                <line x1="787" y1="380" x2="787" y2="420" stroke="#34d399" stroke-width="2" marker-end="url(#a3)" />
+                <rect x="687" y="425" width="200" height="45" rx="10" fill="url(#dg2)" />
+                <text x="787" y="452" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">🏠
+                    Dashboard</text>
+                <!-- Middleware explanation -->
+                <rect x="60" y="420" width="500" height="130" rx="12" fill="rgba(255,255,255,.03)"
+                    stroke="rgba(255,255,255,.08)" />
+                <text x="80" y="448" fill="#4dd9e8" font-size="12" font-weight="700">🛡️ Middleware de Seguridad (en
+                    cada petición):</text>
+                <text x="80" y="472" fill="rgba(255,255,255,.5)" font-size="10">1. verificarAutenticacion() → ¿Sesión
+                    activa? Si no → /login</text>
+                <text x="80" y="492" fill="rgba(255,255,255,.5)" font-size="10">2. verificarPermiso($permiso) → ¿Tiene
+                    permiso? Si no → /dashboard</text>
+                <text x="80" y="512" fill="rgba(255,255,255,.5)" font-size="10">3. verificarRol($roles) → ¿Rol correcto?
+                    Si no → /dashboard</text>
+                <text x="80" y="536" fill="rgba(255,255,255,.4)" font-size="9">💡 Cada Controller verifica permisos en
+                    su __construct()</text>
+            </svg>
+        </div>
+
+        <!-- ==================== ROLES ==================== -->
+        <div class="diagram" id="roles">
+            <svg viewBox="0 0 1000 520" xmlns="http://www.w3.org/2000/svg">
+                <rect width="1000" height="520" rx="16" fill="#111827" />
+                <text x="500" y="38" text-anchor="middle" fill="#e0e6f0" font-size="18" font-weight="700">Roles y
+                    Permisos del Sistema</text>
+                <!-- Administrador -->
+                <rect x="40" y="65" width="220" height="200" rx="12" fill="rgba(220,38,38,.08)" stroke="#dc2626"
+                    stroke-width="1" />
+                <text x="150" y="92" text-anchor="middle" fill="#f87171" font-size="14" font-weight="800">👑
+                    Administrador</text>
+                <text x="60" y="116" fill="rgba(255,255,255,.6)" font-size="9">✓ dashboard_ver</text>
+                <text x="60" y="132" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_ver / crear / aprobar</text>
+                <text x="60" y="148" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_autorizar</text>
+                <text x="60" y="164" fill="rgba(255,255,255,.6)" font-size="9">✓ usuarios_gestionar</text>
+                <text x="60" y="180" fill="rgba(255,255,255,.6)" font-size="9">✓ bitacora_ver</text>
+                <text x="60" y="196" fill="rgba(255,255,255,.6)" font-size="9">✓ configuracion_gestionar</text>
+                <text x="60" y="212" fill="rgba(255,255,255,.6)" font-size="9">✓ permisos_gestionar</text>
+                <text x="60" y="235" fill="#f87171" font-size="8" font-weight="600">⚠ TODOS los permisos
+                    (protegido)</text>
+                <!-- Compras -->
+                <rect x="280" y="65" width="210" height="180" rx="12" fill="rgba(0,114,129,.08)" stroke="#007281"
+                    stroke-width="1" />
+                <text x="385" y="92" text-anchor="middle" fill="#4dd9e8" font-size="14" font-weight="800">🛒
+                    Compras</text>
+                <text x="300" y="116" fill="rgba(255,255,255,.6)" font-size="9">✓ dashboard_ver</text>
+                <text x="300" y="132" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_ver</text>
+                <text x="300" y="148" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_aprobar</text>
+                <text x="300" y="164" fill="rgba(255,255,255,.6)" font-size="9">✓ bitacora_ver</text>
+                <text x="300" y="190" fill="#4dd9e8" font-size="8" font-weight="600">Firma digital + devolver
+                    doc.</text>
+                <text x="300" y="210" fill="#4dd9e8" font-size="8" font-weight="600">Puede rechazar → SOLICITADO</text>
+                <!-- Gerencia -->
+                <rect x="510" y="65" width="210" height="180" rx="12" fill="rgba(124,58,237,.08)" stroke="#7c3aed"
+                    stroke-width="1" />
+                <text x="615" y="92" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="800">🏢
+                    Gerencia</text>
+                <text x="530" y="116" fill="rgba(255,255,255,.6)" font-size="9">✓ dashboard_ver</text>
+                <text x="530" y="132" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_ver</text>
+                <text x="530" y="148" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_autorizar</text>
+                <text x="530" y="164" fill="rgba(255,255,255,.6)" font-size="9">✓ bitacora_ver</text>
+                <text x="530" y="190" fill="#a78bfa" font-size="8" font-weight="600">Autoriza el paso final</text>
+                <text x="530" y="210" fill="#a78bfa" font-size="8" font-weight="600">Puede observar/rechazar</text>
+                <!-- Solicitante -->
+                <rect x="740" y="65" width="220" height="160" rx="12" fill="rgba(217,119,6,.08)" stroke="#d97706"
+                    stroke-width="1" />
+                <text x="850" y="92" text-anchor="middle" fill="#fbbf24" font-size="14" font-weight="800">📝
+                    Solicitante</text>
+                <text x="760" y="116" fill="rgba(255,255,255,.6)" font-size="9">✓ dashboard_ver</text>
+                <text x="760" y="132" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_crear</text>
+                <text x="760" y="148" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos propios</text>
+                <text x="760" y="174" fill="#fbbf24" font-size="8" font-weight="600">Solo ve sus documentos</text>
+                <text x="760" y="194" fill="#fbbf24" font-size="8" font-weight="600">Puede editar si SOLICITADO</text>
+                <!-- Digitalizador -->
+                <rect x="280" y="280" width="440" height="100" rx="12" fill="rgba(5,150,105,.08)" stroke="#059669"
+                    stroke-width="1" />
+                <text x="500" y="310" text-anchor="middle" fill="#34d399" font-size="14" font-weight="800">📷
+                    Digitalizador</text>
+                <text x="300" y="335" fill="rgba(255,255,255,.6)" font-size="9">✓ dashboard_ver (vista
+                    especializada)</text>
+                <text x="300" y="352" fill="rgba(255,255,255,.6)" font-size="9">✓ documentos_crear (solo
+                    digitalizados)</text>
+                <text x="300" y="369" fill="#34d399" font-size="8" font-weight="600">Dashboard propio · Módulo de
+                    escaneo · Archivo digital</text>
+                <!-- Permissions Matrix -->
+                <rect x="60" y="410" width="880" height="85" rx="12" fill="rgba(255,255,255,.03)"
+                    stroke="rgba(255,255,255,.08)" />
+                <text x="80" y="438" fill="#4dd9e8" font-size="12" font-weight="700">⚙️ Gestión de Permisos
+                    (PermisoController):</text>
+                <text x="80" y="460" fill="rgba(255,255,255,.5)" font-size="10">Matriz interactiva Roles × Permisos
+                    editable desde /configuracion/permisos</text>
+                <text x="80" y="480" fill="rgba(255,255,255,.5)" font-size="10">El rol Administrador siempre mantiene
+                    todos los permisos (protección contra bloqueo)</text>
+            </svg>
+        </div>
+
+        <!-- ==================== RUTAS ==================== -->
+        <div class="diagram" id="routes">
+            <svg viewBox="0 0 1050 680" xmlns="http://www.w3.org/2000/svg">
+                <rect width="1050" height="680" rx="16" fill="#111827" />
+                <text x="525" y="38" text-anchor="middle" fill="#e0e6f0" font-size="18" font-weight="700">Mapa de Rutas
+                    (Router)</text>
+                <!-- Auth Routes -->
+                <rect x="40" y="60" width="300" height="120" rx="12" fill="rgba(37,99,235,.08)" stroke="#2563eb"
+                    stroke-width="1" />
+                <text x="60" y="85" fill="#60a5fa" font-size="12" font-weight="700">🔐 Autenticación</text>
+                <text x="60" y="108" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="108"
+                    fill="rgba(255,255,255,.5)" font-size="9">/login → mostrarLogin</text>
+                <text x="60" y="125" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="100" y="125"
+                    fill="rgba(255,255,255,.5)" font-size="9">/login → login</text>
+                <text x="60" y="142" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="142"
+                    fill="rgba(255,255,255,.5)" font-size="9">/logout → logout</text>
+                <text x="60" y="159" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="159"
+                    fill="rgba(255,255,255,.5)" font-size="9">/dashboard → index</text>
+                <!-- Document Routes -->
+                <rect x="40" y="200" width="470" height="260" rx="12" fill="rgba(0,114,129,.08)" stroke="#007281"
+                    stroke-width="1" />
+                <text x="60" y="225" fill="#4dd9e8" font-size="12" font-weight="700">📄 Documentos</text>
+                <text x="60" y="248" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="248"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos → listar</text>
+                <text x="60" y="265" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="265"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/crear → crear</text>
+                <text x="60" y="282" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="100" y="282"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/guardar → guardar</text>
+                <text x="60" y="299" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="299"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/ver/{id} → ver</text>
+                <text x="60" y="316" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="316"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/editar/{id} → editar</text>
+                <text x="60" y="333" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="100" y="333"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/actualizar/{id} → actualizar</text>
+                <text x="60" y="350" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="100" y="350"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/aprobar/{id} → aprobar (Compras)</text>
+                <text x="60" y="367" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="100" y="367"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/autorizar/{id} → autorizar (Gerencia)</text>
+                <text x="60" y="384" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="100" y="384"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/rechazar/{id} → rechazar</text>
+                <text x="60" y="401" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="401"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/descargar/{id}/{tipo} → descargar</text>
+                <text x="60" y="418" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="418"
+                    fill="rgba(255,255,255,.5)" font-size="9">/documentos/digitalizados → digitalizados</text>
+                <text x="60" y="435" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="95" y="435"
+                    fill="rgba(255,255,255,.5)" font-size="9">/archivo-digital → archivoDigital</text>
+                <!-- Users -->
+                <rect x="540" y="60" width="470" height="130" rx="12" fill="rgba(124,58,237,.08)" stroke="#7c3aed"
+                    stroke-width="1" />
+                <text x="560" y="85" fill="#a78bfa" font-size="12" font-weight="700">👥 Usuarios</text>
+                <text x="560" y="108" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="108"
+                    fill="rgba(255,255,255,.5)" font-size="9">/usuarios → index</text>
+                <text x="560" y="125" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="600" y="125"
+                    fill="rgba(255,255,255,.5)" font-size="9">/usuarios/guardar → guardar</text>
+                <text x="560" y="142" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="600" y="142"
+                    fill="rgba(255,255,255,.5)" font-size="9">/usuarios/actualizar → actualizar</text>
+                <text x="560" y="159" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="159"
+                    fill="rgba(255,255,255,.5)" font-size="9">/usuarios/estado/{id} → cambiarEstado</text>
+                <!-- Config -->
+                <rect x="540" y="210" width="470" height="110" rx="12" fill="rgba(217,119,6,.08)" stroke="#d97706"
+                    stroke-width="1" />
+                <text x="560" y="235" fill="#fbbf24" font-size="12" font-weight="700">⚙️ Configuración y Permisos</text>
+                <text x="560" y="258" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="258"
+                    fill="rgba(255,255,255,.5)" font-size="9">/configuracion → index</text>
+                <text x="560" y="275" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="600" y="275"
+                    fill="rgba(255,255,255,.5)" font-size="9">/configuracion/guardar → guardar</text>
+                <text x="560" y="292" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="292"
+                    fill="rgba(255,255,255,.5)" font-size="9">/configuracion/permisos → index</text>
+                <text x="560" y="309" fill="#fbbf24" font-size="9" font-weight="600">POST</text><text x="600" y="309"
+                    fill="rgba(255,255,255,.5)" font-size="9">/configuracion/permisos/guardar → guardar</text>
+                <!-- Bitacora -->
+                <rect x="540" y="340" width="470" height="60" rx="12" fill="rgba(220,38,38,.08)" stroke="#dc2626"
+                    stroke-width="1" />
+                <text x="560" y="365" fill="#f87171" font-size="12" font-weight="700">📜 Bitácora</text>
+                <text x="560" y="388" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="388"
+                    fill="rgba(255,255,255,.5)" font-size="9">/bitacora → index (con filtros)</text>
+                <!-- Notifications -->
+                <rect x="540" y="420" width="470" height="90" rx="12" fill="rgba(5,150,105,.08)" stroke="#059669"
+                    stroke-width="1" />
+                <text x="560" y="445" fill="#34d399" font-size="12" font-weight="700">🔔 Notificaciones
+                    (AJAX/JSON)</text>
+                <text x="560" y="468" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="468"
+                    fill="rgba(255,255,255,.5)" font-size="9">/notificaciones/obtenerRecientes → JSON</text>
+                <text x="560" y="485" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="485"
+                    fill="rgba(255,255,255,.5)" font-size="9">/notificaciones/marcarLeida/{id} → JSON</text>
+                <text x="560" y="502" fill="#34d399" font-size="9" font-weight="600">GET</text><text x="595" y="502"
+                    fill="rgba(255,255,255,.5)" font-size="9">/notificaciones/marcarTodas → JSON</text>
+                <!-- Legend -->
+                <rect x="40" y="530" width="970" height="55" rx="12" fill="rgba(255,255,255,.03)"
+                    stroke="rgba(255,255,255,.06)" />
+                <text x="60" y="555" fill="#34d399" font-size="11" font-weight="700">GET</text><text x="95" y="555"
+                    fill="rgba(255,255,255,.4)" font-size="10">= Lectura/Vista</text>
+                <text x="230" y="555" fill="#fbbf24" font-size="11" font-weight="700">POST</text><text x="270" y="555"
+                    fill="rgba(255,255,255,.4)" font-size="10">= Escritura/Acción</text>
+                <text x="430" y="555" fill="rgba(255,255,255,.4)" font-size="10">{id} = Parámetro dinámico capturado por
+                    Router.php con regex</text>
+                <text x="60" y="575" fill="rgba(255,255,255,.3)" font-size="9">Total: 26 rutas registradas · Front
+                    Controller: public/index.php · Base de datos: SQL Server (sigedoc)</text>
+            </svg>
+        </div>
+
+        <!-- ==================== ACTUALIZACIONES RECIENTES ==================== -->
+        <div class="diagram" id="updates">
+            <svg viewBox="0 0 1100 800" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="ug1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#007281"/><stop offset="100%" stop-color="#00bcd4"/></linearGradient>
+                    <linearGradient id="ug2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#34d399"/></linearGradient>
+                    <linearGradient id="ug3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
+                    <linearGradient id="ug4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d97706"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
+                    <linearGradient id="ug5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#f87171"/></linearGradient>
+                    <filter id="ushadow"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-opacity="0.3"/></filter>
+                </defs>
+                <rect width="1100" height="800" rx="16" fill="#111827"/>
+                <text x="550" y="38" text-anchor="middle" fill="#e0e6f0" font-size="18" font-weight="700">🚀 Actualizaciones — Sesión 18/03/2026</text>
+                <text x="550" y="58" text-anchor="middle" fill="#4dd9e8" font-size="10">Cambios implementados en esta sesión de desarrollo</text>
+
+                <!-- BLOQUE 1: Vista Trazabilidad -->
+                <rect x="40" y="80" width="490" height="165" rx="12" fill="rgba(0,114,129,.08)" stroke="#007281" stroke-width="1"/>
+                <rect x="40" y="80" width="490" height="36" rx="12" fill="url(#ug1)"/>
+                <text x="60" y="103" fill="#fff" font-size="12" font-weight="700">📊 1. Nueva Vista Trazabilidad de Documentos</text>
+                <text x="60" y="135" fill="rgba(255,255,255,.6)" font-size="9">• /seguimiento → Rediseño completo: tarjetas expandibles por expediente</text>
+                <text x="60" y="152" fill="rgba(255,255,255,.6)" font-size="9">• Agrupación automática por documento_id</text>
+                <text x="60" y="169" fill="rgba(255,255,255,.6)" font-size="9">• Línea de recorrido: íconos de colores por tipo de acción</text>
+                <text x="60" y="186" fill="rgba(255,255,255,.6)" font-size="9">• Panel derecho: datos del expediente + barra de tiempo</text>
+                <text x="60" y="203" fill="rgba(255,255,255,.6)" font-size="9">• Filtros: Todos / En Proceso / Finalizados  •  Búsqueda en tiempo real</text>
+                <text x="60" y="220" fill="#4dd9e8" font-size="8" font-weight="600">Archivo: views/seguimiento/index.php  — REESCRITURA COMPLETA</text>
+
+                <!-- BLOQUE 2: Botones Workflow -->
+                <rect x="570" y="80" width="490" height="165" rx="12" fill="rgba(5,150,105,.08)" stroke="#059669" stroke-width="1"/>
+                <rect x="570" y="80" width="490" height="36" rx="12" fill="url(#ug2)"/>
+                <text x="590" y="103" fill="#fff" font-size="12" font-weight="700">⚡ 2. Botones de Acción Workflow Restaurados</text>
+                <text x="590" y="135" fill="rgba(255,255,255,.6)" font-size="9">• ver.php no tenía botones de Aprobar / Autorizar / Rechazar</text>
+                <text x="590" y="152" fill="rgba(255,255,255,.6)" font-size="9">• Compras (estado SOLICITADO) → Aprobar + Devolver</text>
+                <text x="590" y="169" fill="rgba(255,255,255,.6)" font-size="9">• Gerencia/Admin (estado APROBADO_COMPRAS) → Autorizar + Observar</text>
+                <text x="590" y="186" fill="rgba(255,255,255,.6)" font-size="9">• Solicitante dueño rechazado → Corregir y Reenviar</text>
+                <text x="590" y="203" fill="rgba(255,255,255,.6)" font-size="9">• Modal de rechazo con campo de comentario obligatorio</text>
+                <text x="590" y="220" fill="#34d399" font-size="8" font-weight="600">Archivo: views/documentos/ver.php  — BOTONES + MODAL RECHAZO</text>
+
+                <!-- BLOQUE 3: Límites Upload 100MB -->
+                <rect x="40" y="270" width="490" height="150" rx="12" fill="rgba(217,119,6,.08)" stroke="#d97706" stroke-width="1"/>
+                <rect x="40" y="270" width="490" height="36" rx="12" fill="url(#ug4)"/>
+                <text x="60" y="293" fill="#fff" font-size="12" font-weight="700">📁 3. Límite de Subida Aumentado a 100MB</text>
+                <text x="60" y="325" fill="rgba(255,255,255,.6)" font-size="9">• php.ini servidor: upload_max_filesize=100M · post_max_size=110M</text>
+                <text x="60" y="342" fill="rgba(255,255,255,.6)" font-size="9">• memory_limit=512M (producción 10.70.69.38)</text>
+                <text x="60" y="359" fill="rgba(255,255,255,.6)" font-size="9">• DocumentoController.php: $maxSizeMB = 100 (hardcoded, ignora DB)</text>
+                <text x="60" y="376" fill="rgba(255,255,255,.6)" font-size="9">• crear.php UI: "Máx 100MB" en doc maestro y adjuntos</text>
+                <text x="60" y="393" fill="rgba(255,255,255,.6)" font-size="9">• main.js: validación cliente actualizada a 100MB</text>
+                <text x="60" y="410" fill="#fbbf24" font-size="8" font-weight="600">Archivos: DocumentoController.php · crear.php · main.js · php.ini</text>
+
+                <!-- BLOQUE 4: Notificaciones Windows -->
+                <rect x="570" y="270" width="490" height="150" rx="12" fill="rgba(124,58,237,.08)" stroke="#7c3aed" stroke-width="1"/>
+                <rect x="570" y="270" width="490" height="36" rx="12" fill="url(#ug3)"/>
+                <text x="590" y="293" fill="#fff" font-size="12" font-weight="700">🔔 4. Notificaciones Push Windows</text>
+                <text x="590" y="325" fill="rgba(255,255,255,.6)" font-size="9">• notifications.js: módulo IIFE nuevo</text>
+                <text x="590" y="342" fill="rgba(255,255,255,.6)" font-size="9">• Web Notifications API → notificación nativa de Windows</text>
+                <text x="590" y="359" fill="rgba(255,255,255,.6)" font-size="9">• Polling automático cada 30s a /notificaciones/obtenerRecientes</text>
+                <text x="590" y="376" fill="rgba(255,255,255,.6)" font-size="9">• localStorage evita repetir notificaciones ya vistas</text>
+                <text x="590" y="393" fill="rgba(255,255,255,.6)" font-size="9">• sidebar.php: campana con badge rojo + panel desplegable</text>
+                <text x="590" y="410" fill="#a78bfa" font-size="8" font-weight="600">Archivos: public/js/notifications.js (NUEVO) · views/partials/sidebar.php</text>
+
+                <!-- BLOQUE 5: Trazabilidad en ver.php -->
+                <rect x="40" y="445" width="490" height="130" rx="12" fill="rgba(220,38,38,.08)" stroke="#dc2626" stroke-width="1"/>
+                <rect x="40" y="445" width="490" height="36" rx="12" fill="url(#ug5)"/>
+                <text x="60" y="468" fill="#fff" font-size="12" font-weight="700">🗺️ 5. Línea de Vida en ver.php (Panel Derecho)</text>
+                <text x="60" y="500" fill="rgba(255,255,255,.6)" font-size="9">• Rediseño del bloque seguimiento integrado en el visor</text>
+                <text x="60" y="517" fill="rgba(255,255,255,.6)" font-size="9">• Íconos circulares de colores por tipo de acción (primary/emerald/red/amber)</text>
+                <text x="60" y="534" fill="rgba(255,255,255,.6)" font-size="9">• Ubicación (location_on) con usuario y departamento</text>
+                <text x="60" y="551" fill="rgba(255,255,255,.6)" font-size="9">• Botón "Ver historial completo" si hay más de 3 registros</text>
+                <text x="60" y="568" fill="#f87171" font-size="8" font-weight="600">Archivo: views/documentos/ver.php  — SECCIÓN SEGUIMIENTO</text>
+
+                <!-- RESUMEN DE ARCHIVOS -->
+                <rect x="570" y="445" width="490" height="280" rx="12" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+                <text x="590" y="472" fill="#4dd9e8" font-size="12" font-weight="700">📦 Resumen de Archivos Modificados</text>
+                <text x="590" y="500" fill="#34d399" font-size="9" font-weight="600">NUEVOS:</text>
+                <text x="650" y="500" fill="rgba(255,255,255,.6)" font-size="9">public/js/notifications.js</text>
+                <text x="590" y="520" fill="#fbbf24" font-size="9" font-weight="600">MODIFICADOS:</text>
+                <text x="590" y="540" fill="rgba(255,255,255,.5)" font-size="9">• app/Controllers/DocumentoController.php</text>
+                <text x="590" y="557" fill="rgba(255,255,255,.5)" font-size="9">• views/documentos/crear.php</text>
+                <text x="590" y="574" fill="rgba(255,255,255,.5)" font-size="9">• views/documentos/ver.php</text>
+                <text x="590" y="591" fill="rgba(255,255,255,.5)" font-size="9">• views/seguimiento/index.php</text>
+                <text x="590" y="608" fill="rgba(255,255,255,.5)" font-size="9">• views/partials/sidebar.php</text>
+                <text x="590" y="625" fill="rgba(255,255,255,.5)" font-size="9">• public/js/main.js</text>
+                <text x="590" y="645" fill="#f87171" font-size="9" font-weight="600">SERVIDOR (10.70.69.38):</text>
+                <text x="590" y="663" fill="rgba(255,255,255,.5)" font-size="9">• php.ini: upload_max=100M · post_max=110M · memory=512M</text>
+                <text x="590" y="700" fill="#4dd9e8" font-size="10" font-weight="700">Total: 1 archivo nuevo · 6 modificados · 1 config servidor</text>
+
+                <!-- Timeline bar -->
+                <rect x="40" y="600" width="490" height="8" rx="4" fill="rgba(255,255,255,.05)"/>
+                <rect x="40" y="600" width="490" height="8" rx="4" fill="url(#ug1)" opacity="0.7"/>
+                <text x="40" y="628" fill="rgba(255,255,255,.3)" font-size="8">Inicio sesión: 18/03/2026 ~08:00</text>
+                <text x="420" y="628" fill="rgba(255,255,255,.3)" font-size="8">Cierre: 18/03/2026 ~10:09</text>
+            </svg>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        SIGEDOC — Sistema Integrado de Gestión Documental · PROMESE/CAL · Actualizado el 18/03/2026
+    </div>
+
+    <script>
+        function showDiagram(id) {
+            document.querySelectorAll('.diagram').forEach(d => d.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

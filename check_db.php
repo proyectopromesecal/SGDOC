@@ -1,0 +1,35 @@
+<?php
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/app/Core/Database.php';
+
+try {
+    $db = \App\Core\Database::getInstance()->getConnection();
+
+    $stmt = $db->query("
+        SELECT 
+            fk.name AS FK_Name,
+            tp.name AS Parent_Table,
+            cp.name AS Parent_Column,
+            tr.name AS Referenced_Table,
+            cr.name AS Referenced_Column
+        FROM 
+            sys.foreign_keys fk
+        INNER JOIN 
+            sys.tables tp ON fk.parent_object_id = tp.object_id
+        INNER JOIN 
+            sys.tables tr ON fk.referenced_object_id = tr.object_id
+        INNER JOIN 
+            sys.foreign_key_columns fkc ON fkc.constraint_object_id = fk.object_id
+        INNER JOIN 
+            sys.columns cp ON fkc.parent_column_id = cp.column_id AND fkc.parent_object_id = cp.object_id
+        INNER JOIN 
+            sys.columns cr ON fkc.referenced_column_id = cr.column_id AND fkc.referenced_object_id = cr.object_id
+        WHERE 
+            tr.name = 'departamentos'
+    ");
+    $fks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo "Foreign Keys to departamentos:\n";
+    print_r($fks);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+}

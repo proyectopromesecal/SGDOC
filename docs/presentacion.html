@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGEDOC — Presentación Ejecutiva · PROMESE/CAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --p: #007281; --p2: #00bcd4; --s: #E41E26;
+  --dark: #0a0f1e; --card: #111827; --border: rgba(255,255,255,.08);
+}
+html, body { height:100%; overflow:hidden; background:var(--dark); color:#fff;
+  font-family:'Inter',sans-serif; }
+
+/* ─── SLIDES ─── */
+.deck { width:100%; height:100%; position:relative; }
+.slide {
+  position:absolute; inset:0;
+  display:none; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:60px 80px; text-align:center;
+  animation: fadein .5s ease;
+}
+.slide.active { display:flex; }
+@keyframes fadein { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ─── NAV ─── */
+.nav {
+  position:fixed; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px; z-index:99;
+  background:rgba(255,255,255,.06); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:50px; padding:10px 20px;
+}
+.nav button {
+  background:none; border:none; color:rgba(255,255,255,.5);
+  font-size:20px; cursor:pointer; transition:color .2s; line-height:1;
+  padding:4px 8px;
+}
+.nav button:hover { color:var(--p2); }
+.nav .dots { display:flex; gap:6px; }
+.dot {
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(255,255,255,.2); cursor:pointer;
+  transition:all .3s;
+}
+.dot.active { background:var(--p2); width:20px; border-radius:3px; }
+.slide-num {
+  font-size:11px; font-weight:700; color:rgba(255,255,255,.3);
+  letter-spacing:.1em; font-variant-numeric:tabular-nums;
+}
+
+/* ─── COMPONENTS ─── */
+.badge {
+  display:inline-block; padding:6px 18px; border-radius:20px;
+  font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  background:rgba(0,114,129,.2); border:1px solid rgba(0,188,212,.3); color:var(--p2);
+  margin-bottom:20px;
+}
+.big { font-size:clamp(36px,5vw,64px); font-weight:900; line-height:1.05;
+  letter-spacing:-.04em; }
+.sub { font-size:clamp(14px,1.5vw,18px); color:rgba(255,255,255,.55);
+  margin-top:14px; line-height:1.7; max-width:700px; }
+.accent { color:var(--p2); }
+.red { color:#f87171; }
+
+/* cards grid */
+.grid { display:grid; gap:16px; width:100%; max-width:1000px; }
+.g2 { grid-template-columns:repeat(2,1fr); }
+.g3 { grid-template-columns:repeat(3,1fr); }
+.g4 { grid-template-columns:repeat(4,1fr); }
+.card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:20px; padding:28px 24px; text-align:left;
+  position:relative; overflow:hidden;
+  transition:border-color .3s, transform .3s;
+}
+.card:hover { border-color:var(--p); transform:translateY(-3px); }
+.card .icon { font-size:28px; margin-bottom:12px; display:block; }
+.card h4 { font-size:14px; font-weight:800; margin-bottom:6px; letter-spacing:-.01em; }
+.card p { font-size:12px; color:rgba(255,255,255,.5); line-height:1.6; }
+.card .glow {
+  position:absolute; top:-30px; right:-30px; width:80px; height:80px;
+  border-radius:50%; opacity:.15; filter:blur(20px);
+}
+
+/* stat card */
+.stat { text-align:center; }
+.stat .num { font-size:clamp(36px,4vw,52px); font-weight:900;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  letter-spacing:-.04em; }
+.stat .label { font-size:11px; font-weight:700; color:rgba(255,255,255,.4);
+  text-transform:uppercase; letter-spacing:.1em; margin-top:4px; }
+
+/* versus */
+.vs-grid { display:grid; grid-template-columns:1fr 60px 1fr; gap:16px;
+  width:100%; max-width:900px; align-items:start; }
+.vs-col { border-radius:20px; padding:28px; }
+.vs-manual { background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.2); }
+.vs-digital { background:rgba(0,114,129,.08); border:1px solid rgba(0,188,212,.2); }
+.vs-col h3 { font-size:14px; font-weight:800; margin-bottom:16px; text-align:center; }
+.vs-manual h3 { color:#f87171; }
+.vs-digital h3 { color:var(--p2); }
+.vs-col ul { list-style:none; }
+.vs-col ul li { font-size:12px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05);
+  display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.7); }
+.vs-col ul li:last-child { border-bottom:none; }
+.vs-center { display:flex; align-items:center; justify-content:center;
+  font-size:28px; font-weight:900; color:rgba(255,255,255,.2); }
+
+/* workflow */
+.wf { display:flex; align-items:center; gap:0; max-width:900px; width:100%; }
+.wf-step {
+  flex:1; background:var(--card); border:1px solid var(--border);
+  border-radius:16px; padding:20px 14px; text-align:center;
+  position:relative;
+}
+.wf-step .wf-icon { font-size:26px; margin-bottom:8px; }
+.wf-step .wf-role { font-size:9px; font-weight:800; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--p2); margin-bottom:4px; }
+.wf-step .wf-label { font-size:12px; font-weight:700; }
+.wf-step .wf-sub { font-size:10px; color:rgba(255,255,255,.35); margin-top:4px; }
+.wf-arrow { font-size:18px; color:rgba(255,255,255,.2); flex-shrink:0;
+  margin:0 8px; }
+.wf-step.s-blue { border-color:rgba(96,165,250,.4); }
+.wf-step.s-teal { border-color:rgba(0,188,212,.4); }
+.wf-step.s-green { border-color:rgba(52,211,153,.4); }
+.wf-step.s-red { border-color:rgba(248,113,113,.4); }
+
+/* roles strip */
+.roles { display:flex; gap:12px; max-width:900px; width:100%; flex-wrap:wrap;
+  justify-content:center; }
+.role-pill {
+  border-radius:16px; padding:20px 24px; text-align:center; flex:1; min-width:180px;
+}
+.role-pill .ricon { font-size:30px; margin-bottom:10px; }
+.role-pill h4 { font-size:13px; font-weight:800; margin-bottom:6px; }
+.role-pill p { font-size:11px; color:rgba(255,255,255,.5); line-height:1.5; }
+
+/* checklist */
+.checklist { text-align:left; max-width:700px; width:100%; }
+.checklist li {
+  display:flex; align-items:flex-start; gap:14px; padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,.06); font-size:14px;
+}
+.checklist li:last-child { border-bottom:none; }
+.checklist .ck { font-size:20px; flex-shrink:0; margin-top:1px; }
+.checklist strong { display:block; font-weight:800; margin-bottom:2px; }
+.checklist span { color:rgba(255,255,255,.55); font-size:13px; line-height:1.5; }
+
+/* title pill */
+.ttag {
+  display:inline-block; background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.5);
+  font-size:10px; font-weight:800; text-transform:uppercase;
+  letter-spacing:.15em; padding:5px 16px; border-radius:20px; margin-bottom:16px;
+}
+
+/* section title left */
+.slide-left { align-items:flex-start; text-align:left; }
+.slide-left .sub { max-width:100%; }
+
+/* gradient bg sections */
+.grad1 { background:radial-gradient(ellipse at center top, rgba(0,114,129,.15) 0%, transparent 60%); }
+.grad2 { background:radial-gradient(ellipse at center top, rgba(228,30,38,.1) 0%, transparent 60%); }
+.grad3 { background:radial-gradient(ellipse at center top, rgba(5,150,105,.1) 0%, transparent 60%); }
+.grad4 { background:radial-gradient(ellipse at 80% 20%, rgba(124,58,237,.1) 0%, transparent 60%); }
+
+/* progress bar */
+.progress {
+  width:100%; max-width:600px; background:rgba(255,255,255,.06);
+  border-radius:999px; height:6px; overflow:hidden; margin-bottom:6px;
+}
+.progress-fill { height:100%; border-radius:999px;
+  background:linear-gradient(90deg,var(--p),var(--p2)); }
+
+.row { display:flex; align-items:center; gap:12px; width:100%;
+  max-width:700px; font-size:13px; margin-bottom:8px; }
+.row .rl { color:rgba(255,255,255,.5); min-width:180px; text-align:right; font-size:12px; }
+.row .rv { font-weight:800; color:var(--p2); }
+
+/* slides bg lines */
+.slide::before {
+  content:'';
+  position:absolute; inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none; z-index:0;
+}
+.slide > * { position:relative; z-index:1; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- ══════════ SLIDE 0 — PORTADA ══════════ -->
+  <div class="slide active grad1">
+    <div style="margin-bottom:32px">
+      <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--p),var(--p2));
+        border-radius:20px;display:flex;align-items:center;justify-content:center;
+        font-size:32px;margin:0 auto 24px;box-shadow:0 0 40px rgba(0,114,129,.4)">📄</div>
+      <div class="badge">PROMESE / CAL · Sistema Documental</div>
+    </div>
+    <div class="big">SIGEDOC</div>
+    <div style="font-size:clamp(18px,2.5vw,28px);font-weight:300;color:rgba(255,255,255,.6);
+      margin-top:8px;letter-spacing:-.02em">
+      Sistema Integrado de <span class="accent" style="font-weight:700">Gestión Documental</span>
+    </div>
+    <div class="sub">Digitalización y automatización del flujo de aprobaciones<br>de expedientes de compra en PROMESE/CAL.</div>
+    <div style="margin-top:40px;font-size:11px;color:rgba(255,255,255,.2);
+      letter-spacing:.15em;text-transform:uppercase">Marzo 2026 · Versión 2.0</div>
+  </div>
+
+  <!-- ══════════ SLIDE 1 — EL PROBLEMA ══════════ -->
+  <div class="slide grad2">
+    <div class="ttag">El problema</div>
+    <div class="big" style="font-size:clamp(28px,4vw,50px);max-width:800px">
+      El proceso <span class="red">manual</span> costaba<br>tiempo, papel y errores
+    </div>
+    <div class="sub" style="margin-bottom:40px">
+      Antes del sistema, cada expediente de compra requería impresiones, firmas físicas, traslados entre oficinas y retrabajo constante.
+    </div>
+    <div class="grid g4" style="max-width:900px">
+      <div class="card">
+        <div class="glow" style="background:#f87171"></div>
+        <span class="icon">📂</span>
+        <h4>Documentos perdidos</h4>
+        <p>Expedientes físicos extraviados o sin seguimiento claro.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:#fbbf24"></div>
+        <span class="icon">⏳</span>
+        <h4>Tiempos largos</h4>
+        <p>Días de espera para firmas y aprobaciones entre departamentos.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:#f87171"></div>
+        <span class="icon">❌</span>
+        <h4>Sin trazabilidad</h4>
+        <p>Imposible saber en qué estado estaba un documento o quién lo tenía.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:#a78bfa"></div>
+        <span class="icon">📋</span>
+        <h4>Doble trabajo</h4>
+        <p>Reescritura de datos en múltiples formatos y sistemas separados.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 2 — LA SOLUCIÓN ══════════ -->
+  <div class="slide grad1">
+    <div class="ttag">La solución</div>
+    <div class="big" style="font-size:clamp(26px,3.5vw,48px);max-width:900px">
+      <span class="accent">SIGEDOC</span> digitaliza y automatiza<br>todo el ciclo de aprobación
+    </div>
+    <div class="sub" style="margin-bottom:40px">Una plataforma web centralizada que reemplaza el papel por flujos digitales seguros, trazables y eficientes.</div>
+    <ul class="checklist" style="max-width:860px">
+      <li><span class="ck">🌐</span><div><strong>Acceso desde cualquier equipo en la red</strong><span>Sin instalaciones. Solo navegador Chrome, Edge o Firefox conectado a la red interna.</span></div></li>
+      <li><span class="ck">✍️</span><div><strong>Firma digital automática (OpenSSL)</strong><span>Cada aprobación de Compras genera una firma criptográfica que garantiza autenticidad.</span></div></li>
+      <li><span class="ck">🔔</span><div><strong>Notificaciones en tiempo real</strong><span>El sistema alerta automáticamente a cada actor cuando hay una acción pendiente o completada.</span></div></li>
+      <li><span class="ck">📍</span><div><strong>Trazabilidad completa</strong><span>Cada movimiento queda registrado: quién, cuándo, qué acción y qué comentario dejó.</span></div></li>
+    </ul>
+  </div>
+
+  <!-- ══════════ SLIDE 3 — VERSUS ══════════ -->
+  <div class="slide">
+    <div class="ttag">Manual vs. Digital</div>
+    <div class="big" style="font-size:clamp(24px,3vw,42px);margin-bottom:32px">
+      Comparativa de rendimiento
+    </div>
+    <div class="vs-grid">
+      <div class="vs-col vs-manual">
+        <h3>📄 Sistema Manual</h3>
+        <ul>
+          <li><span>❌</span> Documentos físicos → riesgo de extravío</li>
+          <li><span>❌</span> Sin trazabilidad ni historial</li>
+          <li><span>❌</span> Aprobaciones tardan 2-5 días</li>
+          <li><span>❌</span> Cero notificaciones automáticas</li>
+          <li><span>❌</span> Imposible auditar cambios</li>
+          <li><span>❌</span> Requiere presencia física</li>
+          <li><span>❌</span> Alto consumo de papel e impresión</li>
+          <li><span>❌</span> Errores de transcripción frecuentes</li>
+        </ul>
+      </div>
+      <div class="vs-center">VS</div>
+      <div class="vs-col vs-digital">
+        <h3>💻 SIGEDOC</h3>
+        <ul>
+          <li><span>✅</span> Documentos digitales en nube interna</li>
+          <li><span>✅</span> Historial completo e inmutable</li>
+          <li><span>✅</span> Aprobaciones en minutos</li>
+          <li><span>✅</span> Alertas push en Windows + panel web</li>
+          <li><span>✅</span> Bitácora de auditoría completa</li>
+          <li><span>✅</span> Acceso desde cualquier PC de la red</li>
+          <li><span>✅</span> Cero papel en el proceso</li>
+          <li><span>✅</span> Datos estructurados, sin errores manuales</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 4 — FLUJO ══════════ -->
+  <div class="slide grad1">
+    <div class="ttag">Cómo funciona</div>
+    <div class="big" style="font-size:clamp(24px,3vw,42px);margin-bottom:36px">
+      Flujo de aprobación en <span class="accent">3 pasos</span>
+    </div>
+    <div class="wf">
+      <div class="wf-step s-blue">
+        <div class="wf-icon">📝</div>
+        <div class="wf-role">Solicitante</div>
+        <div class="wf-label">1. Crear Solicitud</div>
+        <div class="wf-sub">Sube PDF + detalles<br>→ Estado: <b>SOLICITADO</b></div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step s-teal">
+        <div class="wf-icon">🛒</div>
+        <div class="wf-role">Compras</div>
+        <div class="wf-label">2. Revisar y Aprobar</div>
+        <div class="wf-sub">Firma digital OpenSSL<br>→ Estado: <b>APROBADO</b></div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step s-green">
+        <div class="wf-icon">🏢</div>
+        <div class="wf-role">Gerencia</div>
+        <div class="wf-label">3. Autorizar</div>
+        <div class="wf-sub">Autorización final<br>→ Estado: <b>AUTORIZADO</b></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:24px;margin-top:28px;flex-wrap:wrap;justify-content:center">
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.5)">
+        <span style="color:#fbbf24;font-size:16px">↩</span> Compras puede devolver al solicitante con comentario
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.5)">
+        <span style="color:#f87171;font-size:16px">✕</span> Gerencia puede rechazar con observación
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 5 — ROLES ══════════ -->
+  <div class="slide grad4">
+    <div class="ttag">Roles del sistema</div>
+    <div class="big" style="font-size:clamp(24px,3vw,42px);margin-bottom:32px">
+      4 roles, cada uno con su función
+    </div>
+    <div class="roles">
+      <div class="role-pill" style="background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25)">
+        <div class="ricon">👑</div>
+        <h4 style="color:#f87171">Administrador</h4>
+        <p>Control total: usuarios, permisos, configuración y todos los documentos.</p>
+      </div>
+      <div class="role-pill" style="background:rgba(0,114,129,.1);border:1px solid rgba(0,188,212,.25)">
+        <div class="ricon">🛒</div>
+        <h4 style="color:var(--p2)">Compras</h4>
+        <p>Revisa expedientes SOLICITADOS. Aprueba con firma digital o devuelve.</p>
+      </div>
+      <div class="role-pill" style="background:rgba(124,58,237,.1);border:1px solid rgba(167,139,250,.25)">
+        <div class="ricon">🏢</div>
+        <h4 style="color:#a78bfa">Gerencia</h4>
+        <p>Autoriza definitivamente los expedientes ya aprobados por Compras.</p>
+      </div>
+      <div class="role-pill" style="background:rgba(217,119,6,.1);border:1px solid rgba(251,191,36,.25)">
+        <div class="ricon">📝</div>
+        <h4 style="color:#fbbf24">Solicitante</h4>
+        <p>Crea solicitudes y hace seguimiento de su propio expediente en tiempo real.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 6 — FEATURES ══════════ -->
+  <div class="slide grad1">
+    <div class="ttag">Funcionalidades clave</div>
+    <div class="big" style="font-size:clamp(22px,3vw,42px);margin-bottom:32px">
+      Todo lo que el sistema ofrece
+    </div>
+    <div class="grid g3" style="max-width:960px">
+      <div class="card">
+        <div class="glow" style="background:var(--p2)"></div>
+        <span class="icon">📊</span>
+        <h4>Trazabilidad en tiempo real</h4>
+        <p>Vista de seguimiento con tarjetas expandibles, línea de vida y filtros por estado.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:#a78bfa"></div>
+        <span class="icon">🔔</span>
+        <h4>Notificaciones Push</h4>
+        <p>Alertas nativas de Windows + panel interno con polling automático cada 30 segundos.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:#34d399"></div>
+        <span class="icon">✍️</span>
+        <h4>Firma Digital OpenSSL</h4>
+        <p>Cada aprobación aplica una firma criptográfica verificable e inmutable.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:#fbbf24"></div>
+        <span class="icon">📁</span>
+        <h4>Visor de Documentos</h4>
+        <p>Previsualización de PDFs e imágenes directamente en el navegador sin descargar.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:#f87171"></div>
+        <span class="icon">📜</span>
+        <h4>Bitácora de Auditoría</h4>
+        <p>Registro inmutable de todos los eventos del sistema con usuario, fecha y detalle.</p>
+      </div>
+      <div class="card">
+        <div class="glow" style="background:var(--p)"></div>
+        <span class="icon">🔐</span>
+        <h4>Seguridad y Roles</h4>
+        <p>Integración LDAP, CSRF, roles configurables y matriz de permisos editable.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 7 — FICHA TÉCNICA ══════════ -->
+  <div class="slide">
+    <div class="ttag">Ficha técnica</div>
+    <div class="big" style="font-size:clamp(22px,3vw,42px);margin-bottom:36px">
+      Especificaciones del sistema
+    </div>
+    <div class="grid g2" style="max-width:860px;text-align:left">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="row"><span class="rl">Arquitectura</span><span class="rv">MVC — PHP 8+</span></div>
+        <div class="row"><span class="rl">Base de datos</span><span class="rv">SQL Server (sigedoc)</span></div>
+        <div class="row"><span class="rl">Servidor web</span><span class="rv">Apache (Ubuntu)</span></div>
+        <div class="row"><span class="rl">Servidor de producción</span><span class="rv">10.70.69.38</span></div>
+        <div class="row"><span class="rl">Autenticación</span><span class="rv">LDAP / Active Directory</span></div>
+        <div class="row"><span class="rl">Firma digital</span><span class="rv">OpenSSL RSA-2048</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="row"><span class="rl">Tamaño máx. archivo</span><span class="rv">100 MB</span></div>
+        <div class="row"><span class="rl">Formatos soportados</span><span class="rv">PDF, JPG, PNG</span></div>
+        <div class="row"><span class="rl">Notificaciones push</span><span class="rv">Web Notifications API</span></div>
+        <div class="row"><span class="rl">Frontend</span><span class="rv">Tailwind CSS + Vanilla JS</span></div>
+        <div class="row"><span class="rl">Seguridad</span><span class="rv">CSRF, sesiones PHP</span></div>
+        <div class="row"><span class="rl">Compatibilidad</span><span class="rv">Chrome, Edge, Firefox</span></div>
+      </div>
+    </div>
+    <div style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+      <div style="background:rgba(0,114,129,.1);border:1px solid rgba(0,188,212,.2);
+        border-radius:12px;padding:14px 24px;text-align:center">
+        <div class="stat"><div class="num">26</div><div class="label">Rutas API</div></div>
+      </div>
+      <div style="background:rgba(0,114,129,.1);border:1px solid rgba(0,188,212,.2);
+        border-radius:12px;padding:14px 24px;text-align:center">
+        <div class="stat"><div class="num">4</div><div class="label">Roles</div></div>
+      </div>
+      <div style="background:rgba(0,114,129,.1);border:1px solid rgba(0,188,212,.2);
+        border-radius:12px;padding:14px 24px;text-align:center">
+        <div class="stat"><div class="num">10</div><div class="label">Controllers</div></div>
+      </div>
+      <div style="background:rgba(0,114,129,.1);border:1px solid rgba(0,188,212,.2);
+        border-radius:12px;padding:14px 24px;text-align:center">
+        <div class="stat"><div class="num">100%</div><div class="label">Digital</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 8 — IMPACTO ══════════ -->
+  <div class="slide grad3">
+    <div class="ttag">Impacto esperado</div>
+    <div class="big" style="font-size:clamp(24px,3vw,46px);margin-bottom:40px">
+      Beneficios <span class="accent">medibles</span> para la institución
+    </div>
+    <div style="width:100%;max-width:700px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">
+        <span>Reducción de tiempo en aprobaciones</span><span style="color:#34d399;font-weight:800">~80%</span>
+      </div>
+      <div class="progress"><div class="progress-fill" style="width:80%"></div></div>
+    </div>
+    <div style="width:100%;max-width:700px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">
+        <span>Eliminación de documentos físicos perdidos</span><span style="color:#34d399;font-weight:800">100%</span>
+      </div>
+      <div class="progress"><div class="progress-fill" style="width:100%"></div></div>
+    </div>
+    <div style="width:100%;max-width:700px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">
+        <span>Trazabilidad y auditoría de expedientes</span><span style="color:#34d399;font-weight:800">100%</span>
+      </div>
+      <div class="progress"><div class="progress-fill" style="width:100%"></div></div>
+    </div>
+    <div style="width:100%;max-width:700px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">
+        <span>Reducción de uso de papel e impresión</span><span style="color:#34d399;font-weight:800">~70%</span>
+      </div>
+      <div class="progress"><div class="progress-fill" style="width:70%"></div></div>
+    </div>
+    <div style="width:100%;max-width:700px;margin-bottom:32px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">
+        <span>Disponibilidad del sistema (uptime)</span><span style="color:#34d399;font-weight:800">99.9%</span>
+      </div>
+      <div class="progress"><div class="progress-fill" style="width:99%"></div></div>
+    </div>
+    <div class="sub">El sistema permite que los expedientes se revisen y aprueben en <strong style="color:white">minutos en lugar de días</strong>, eliminando desplazamientos físicos y retrabajo.</div>
+  </div>
+
+  <!-- ══════════ SLIDE 9 — CIERRE ══════════ -->
+  <div class="slide grad1">
+    <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--p),var(--p2));
+      border-radius:20px;display:flex;align-items:center;justify-content:center;
+      font-size:32px;margin-bottom:32px;box-shadow:0 0 60px rgba(0,114,129,.5)">📄</div>
+    <div class="big" style="font-size:clamp(30px,4vw,56px)">
+      SIGEDOC
+    </div>
+    <div style="font-size:clamp(14px,2vw,22px);font-weight:300;color:rgba(255,255,255,.5);margin-top:6px">
+      Un paso adelante en la <span class="accent" style="font-weight:700">transformación digital</span> de PROMESE/CAL
+    </div>
+    <div class="sub" style="margin:24px 0 40px">
+      El sistema está en producción, completamente operativo y listo para escalar a otros departamentos de la institución.
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+      <div style="background:rgba(0,114,129,.15);border:1px solid rgba(0,188,212,.2);
+        border-radius:12px;padding:16px 28px;font-size:12px;color:rgba(255,255,255,.6)">
+        🌐 Servidor: <strong style="color:white">10.70.69.38</strong>
+      </div>
+      <div style="background:rgba(0,114,129,.15);border:1px solid rgba(0,188,212,.2);
+        border-radius:12px;padding:16px 28px;font-size:12px;color:rgba(255,255,255,.6)">
+        📅 Versión: <strong style="color:white">2.0 · Marzo 2026</strong>
+      </div>
+      <div style="background:rgba(0,114,129,.15);border:1px solid rgba(0,188,212,.2);
+        border-radius:12px;padding:16px 28px;font-size:12px;color:rgba(255,255,255,.6)">
+        🏢 <strong style="color:white">PROMESE / CAL</strong>
+      </div>
+    </div>
+    <div style="margin-top:48px;font-size:12px;color:rgba(255,255,255,.2);letter-spacing:.1em;text-transform:uppercase">
+      Departamento de Tecnología de la Información
+    </div>
+  </div>
+
+</div><!-- /.deck -->
+
+<!-- ─── NAVIGATION ─── -->
+<div class="nav" id="nav">
+  <button onclick="prev()" title="Anterior">‹</button>
+  <div class="dots" id="dots"></div>
+  <button onclick="next()" title="Siguiente">›</button>
+  <span class="slide-num" id="slideNum">1 / 10</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const numEl  = document.getElementById('slideNum');
+let cur = 0;
+
+// Build dots
+slides.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur = (n + slides.length) % slides.length;
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  numEl.textContent = (cur+1) + ' / ' + slides.length;
+}
+function next() { goTo(cur+1); }
+function prev() { goTo(cur-1); }
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); next(); }
+  if (e.key==='ArrowLeft' ||e.key==='ArrowUp')  { e.preventDefault(); prev(); }
+  if (e.key==='Home') goTo(0);
+  if (e.key==='End')  goTo(slides.length-1);
+});
+
+// Touch swipe
+let tx = 0;
+document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+document.addEventListener('touchend',   e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 50) dx>0 ? next() : prev();
+});
+</script>
+</body>
+</html>

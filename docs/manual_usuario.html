@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Usuario — SIGEDOC · PROMESE/CAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #007281;
+    --primary-light: #e0f4f6;
+    --secondary: #E41E26;
+    --dark: #111827;
+    --gray: #6b7280;
+    --light: #f9fafb;
+    --border: #e5e7eb;
+    --success: #059669;
+    --warning: #d97706;
+    --info: #2563eb;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f3f4f6;
+    color: #1f2937;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── SCREEN ─── */
+  .screen-nav {
+    position: fixed; top:0; left:0; right:0; z-index:999;
+    background: var(--primary);
+    color: white;
+    display: flex; align-items:center; justify-content:space-between;
+    padding: 12px 32px;
+    box-shadow: 0 2px 12px rgba(0,114,129,.4);
+  }
+  .screen-nav h1 { font-size:16px; font-weight:800; letter-spacing:-.03em; }
+  .btn-pdf {
+    background: white; color: var(--primary);
+    border: none; padding: 8px 20px;
+    border-radius: 8px; font-size:13px; font-weight:700;
+    cursor:pointer; text-transform:uppercase; letter-spacing:.05em;
+    transition: all .2s;
+  }
+  .btn-pdf:hover { background: var(--primary-light); }
+
+  /* ─── LAYOUT ─── */
+  .page-wrapper {
+    max-width: 900px;
+    margin: 80px auto 60px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 40px rgba(0,0,0,.12);
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    background: linear-gradient(135deg, #005a66 0%, #007281 50%, #009dad 100%);
+    color: white;
+    padding: 80px 64px;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+    display: flex; flex-direction:column; justify-content:flex-end;
+  }
+  .cover::before {
+    content:'';
+    position:absolute; top:-80px; right:-80px;
+    width:400px; height:400px;
+    background: rgba(255,255,255,.04);
+    border-radius:50%;
+  }
+  .cover::after {
+    content:'';
+    position:absolute; bottom:-60px; left:40%;
+    width:300px; height:300px;
+    background: rgba(255,255,255,.03);
+    border-radius:50%;
+  }
+  .cover-badge {
+    display:inline-block;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.2);
+    padding: 6px 16px; border-radius:20px;
+    font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    margin-bottom: 24px; width:fit-content;
+  }
+  .cover h1 {
+    font-size: 42px; font-weight:900; letter-spacing:-.03em;
+    line-height:1.1; margin-bottom:8px; position:relative; z-index:1;
+  }
+  .cover h2 {
+    font-size:16px; font-weight:500; opacity:.8; position:relative; z-index:1;
+    margin-bottom:40px;
+  }
+  .cover-meta {
+    display:flex; gap:32px; position:relative; z-index:1;
+    padding-top: 24px; border-top: 1px solid rgba(255,255,255,.2);
+  }
+  .cover-meta div { font-size:11px; opacity:.7; }
+  .cover-meta strong { font-size:13px; opacity:1; display:block; }
+
+  /* ─── CONTENT ─── */
+  .content { padding: 0 64px 64px; }
+
+  /* ─── TOC ─── */
+  .toc {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin: 48px 0 40px;
+  }
+  .toc h3 {
+    font-size:13px; font-weight:800; color:var(--primary);
+    text-transform:uppercase; letter-spacing:.1em; margin-bottom:20px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .toc-list { list-style:none; }
+  .toc-list li {
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 6px 0; border-bottom:1px dashed var(--border);
+    font-size:13px;
+  }
+  .toc-list li:last-child { border-bottom:none; }
+  .toc-list a { color: var(--primary); text-decoration:none; font-weight:500; }
+  .toc-list a:hover { text-decoration:underline; }
+  .toc-page { color:var(--gray); font-size:12px; }
+
+  /* ─── SECTIONS ─── */
+  .section { margin-bottom: 56px; }
+  .section-header {
+    display:flex; align-items:center; gap:12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary-light);
+  }
+  .section-num {
+    width:36px; height:36px;
+    background: var(--primary); color:white;
+    border-radius:10px; display:flex; align-items:center;
+    justify-content:center; font-size:14px; font-weight:800;
+    flex-shrink:0;
+  }
+  .section h2 {
+    font-size:20px; font-weight:800; color:var(--dark);
+    letter-spacing:-.02em;
+  }
+  .section p { color:#374151; line-height:1.75; margin-bottom:12px; }
+  .section h3 {
+    font-size:15px; font-weight:700; color:var(--dark);
+    margin: 24px 0 10px; letter-spacing:-.01em;
+  }
+  .section h4 {
+    font-size:13px; font-weight:700; color:var(--primary);
+    margin: 16px 0 8px; text-transform:uppercase; letter-spacing:.05em;
+  }
+
+  /* ─── CALLOUTS ─── */
+  .callout {
+    border-radius:10px; padding:16px 20px;
+    margin:16px 0; display:flex; gap:12px; align-items:flex-start;
+    font-size:13px; line-height:1.6;
+  }
+  .callout-icon { font-size:18px; flex-shrink:0; margin-top:2px; }
+  .callout.info { background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; }
+  .callout.warning { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
+  .callout.success { background:#f0fdf4; border:1px solid #bbf7d0; color:#14532d; }
+  .callout.danger { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; }
+
+  /* ─── TABLES ─── */
+  .table-wrap { overflow-x:auto; margin:16px 0; border-radius:10px; border:1px solid var(--border); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead { background:var(--dark); color:white; }
+  thead th { padding:12px 16px; text-align:left; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+  tbody tr { border-bottom:1px solid var(--border); }
+  tbody tr:last-child { border-bottom:none; }
+  tbody td { padding:12px 16px; vertical-align:top; }
+  tbody tr:hover { background:var(--light); }
+
+  /* ─── BADGES ─── */
+  .badge {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:3px 10px; border-radius:20px;
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+  }
+  .badge-teal { background:#ccfbf1; color:#0f766e; }
+  .badge-blue { background:#dbeafe; color:#1d4ed8; }
+  .badge-amber { background:#fef3c7; color:#92400e; }
+  .badge-green { background:#dcfce7; color:#15803d; }
+  .badge-red { background:#fee2e2; color:#991b1b; }
+  .badge-purple { background:#ede9fe; color:#6d28d9; }
+  .badge-gray { background:#f3f4f6; color:#4b5563; }
+
+  /* ─── STEPS ─── */
+  .steps { list-style:none; counter-reset:steps; margin:16px 0; }
+  .steps li {
+    counter-increment:steps;
+    display:flex; gap:16px; margin-bottom:20px;
+    align-items:flex-start;
+  }
+  .steps li::before {
+    content:counter(steps);
+    min-width:28px; height:28px;
+    background:var(--primary); color:white;
+    border-radius:50%; font-size:12px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:2px;
+  }
+  .steps li strong { display:block; font-weight:700; color:var(--dark); margin-bottom:4px; }
+  .steps li span { color:var(--gray); font-size:13px; line-height:1.6; }
+
+  /* ─── WORKFLOW CARDS ─── */
+  .workflow {
+    display:grid; grid-template-columns:1fr 32px 1fr 32px 1fr;
+    gap:0; align-items:center; margin:24px 0;
+  }
+  .wf-node {
+    background:var(--light); border:2px solid var(--border);
+    border-radius:12px; padding:16px; text-align:center;
+  }
+  .wf-node.active { border-color:var(--primary); background:var(--primary-light); }
+  .wf-node.success-node { border-color:var(--success); background:#f0fdf4; }
+  .wf-node.danger-node { border-color:var(--secondary); background:#fef2f2; }
+  .wf-node .icon { font-size:24px; margin-bottom:6px; }
+  .wf-node .label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:var(--dark); }
+  .wf-node .sub { font-size:10px; color:var(--gray); margin-top:2px; }
+  .wf-arrow { text-align:center; color:var(--primary); font-size:20px; font-weight:700; }
+
+  /* ─── CODE ─── */
+  code {
+    background:#f3f4f6; padding:2px 6px; border-radius:4px;
+    font-family:monospace; font-size:12px; color:#dc2626;
+  }
+
+  /* ─── ROLE CARDS ─── */
+  .roles-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin:16px 0; }
+  .role-card {
+    border-radius:12px; padding:20px;
+    border:1px solid var(--border);
+  }
+  .role-card h4 { font-size:13px; font-weight:800; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .role-card ul { list-style:none; }
+  .role-card ul li {
+    font-size:12px; color:#374151; padding:3px 0;
+    display:flex; align-items:center; gap:6px;
+  }
+  .role-card ul li::before { content:'✓'; color:var(--success); font-weight:800; }
+  .role-admin { background:#fef2f2; border-color:#fecaca; }
+  .role-admin h4 { color:#991b1b; }
+  .role-compras { background:#f0fdfa; border-color:#99f6e4; }
+  .role-compras h4 { color:#0f766e; }
+  .role-gerencia { background:#faf5ff; border-color:#d8b4fe; }
+  .role-gerencia h4 { color:#6d28d9; }
+  .role-solicitante { background:#fffbeb; border-color:#fde68a; }
+  .role-solicitante h4 { color:#92400e; }
+
+  /* ─── FOOTER ─── */
+  .manual-footer {
+    background: var(--dark); color:rgba(255,255,255,.5);
+    text-align:center; padding:24px; font-size:12px;
+  }
+  .manual-footer strong { color:white; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent);
+    margin:40px 0;
+  }
+
+  /* ─── PRINT STYLES ─── */
+  @media print {
+    body { background:white; font-size:12px; }
+    .screen-nav { display:none !important; }
+    .page-wrapper {
+      max-width:100%; margin:0;
+      box-shadow:none; border-radius:0;
+    }
+    .cover { min-height:auto; padding:60px 50px; }
+    .content { padding: 0 50px 50px; }
+    .section { page-break-inside: avoid; }
+    .section-header { page-break-after: avoid; }
+    h2, h3 { page-break-after: avoid; }
+    .callout { page-break-inside: avoid; }
+    .toc { page-break-inside: avoid; }
+    table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+    .workflow { page-break-inside: avoid; }
+    .roles-grid { page-break-inside: avoid; }
+    @page {
+      margin: 20mm 15mm;
+      size: A4;
+    }
+    @page :first { margin-top: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Screen Nav -->
+<div class="screen-nav">
+  <h1>📄 Manual de Usuario — SIGEDOC</h1>
+  <button class="btn-pdf" onclick="window.print()">🖨️ Exportar PDF</button>
+</div>
+
+<div class="page-wrapper">
+
+  <!-- ════ PORTADA ════ -->
+  <div class="cover">
+    <span class="cover-badge">📋 Documentación Oficial</span>
+    <h1>SIGEDOC</h1>
+    <h2>Sistema Integrado de Gestión Documental<br>Manual de Usuario · PROMESE/CAL</h2>
+    <div class="cover-meta">
+      <div><div>Versión</div><strong>2.0</strong></div>
+      <div><div>Fecha</div><strong>18 de Marzo, 2026</strong></div>
+      <div><div>Clasificación</div><strong>Uso Interno</strong></div>
+      <div><div>Departamento</div><strong>Tecnología</strong></div>
+    </div>
+  </div>
+
+  <!-- ════ CONTENIDO ════ -->
+  <div class="content">
+
+    <!-- ÍNDICE -->
+    <div class="toc">
+      <h3>📑 Tabla de Contenidos</h3>
+      <ul class="toc-list">
+        <li><a href="#s1">1. Introducción al Sistema</a><span class="toc-page">§1</span></li>
+        <li><a href="#s2">2. Acceso y Autenticación</a><span class="toc-page">§2</span></li>
+        <li><a href="#s3">3. Roles y Permisos</a><span class="toc-page">§3</span></li>
+        <li><a href="#s4">4. Crear y Subir un Documento</a><span class="toc-page">§4</span></li>
+        <li><a href="#s5">5. Ciclo de Aprobación</a><span class="toc-page">§5</span></li>
+        <li><a href="#s6">6. Trazabilidad de Documentos</a><span class="toc-page">§6</span></li>
+        <li><a href="#s7">7. Notificaciones</a><span class="toc-page">§7</span></li>
+        <li><a href="#s8">8. Administración del Sistema</a><span class="toc-page">§8</span></li>
+        <li><a href="#s9">9. Límites y Configuración</a><span class="toc-page">§9</span></li>
+        <li><a href="#s10">10. Preguntas Frecuentes</a><span class="toc-page">§10</span></li>
+      </ul>
+    </div>
+
+    <!-- ─── SECCIÓN 1 ─── -->
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Introducción al Sistema</h2>
+      </div>
+      <p><strong>SIGEDOC</strong> (Sistema Integrado de Gestión Documental) es la plataforma oficial de PROMESE/CAL para la gestión, seguimiento y aprobación de expedientes de compra y solicitudes documentales. El sistema digitaliza el flujo de aprobaciones que anteriormente se manejaba en papel, garantizando trazabilidad, seguridad y eficiencia.</p>
+
+      <h3>¿Qué permite hacer SIGEDOC?</h3>
+      <ul class="steps">
+        <li>
+          <strong>Crear y enviar solicitudes</strong>
+          <span>Los solicitantes pueden cargar documentos PDF e iniciar un proceso de aprobación desde cualquier equipo conectado a la red interna.</span>
+        </li>
+        <li>
+          <strong>Revisar y aprobar expedientes</strong>
+          <span>El departamento de Compras revisa, aprueba o devuelve los documentos con comentarios para corrección.</span>
+        </li>
+        <li>
+          <strong>Autorización de Gerencia</strong>
+          <span>La gerencia autoriza definitivamente los expedientes ya aprobados por Compras, cerrando el ciclo.</span>
+        </li>
+        <li>
+          <strong>Rastrear el estado en tiempo real</strong>
+          <span>Cualquier usuario puede ver en qué etapa está su documento y quién lo tiene en espera.</span>
+        </li>
+      </ul>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>El sistema utiliza <strong>firma digital con OpenSSL</strong> al momento de aprobación por Compras, garantizando la autenticidad del proceso de revisión. El servidor de producción se encuentra en <code>10.70.69.38</code>.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 2 ─── -->
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>Acceso y Autenticación</h2>
+      </div>
+
+      <h3>Cómo iniciar sesión</h3>
+      <p>Acceda al sistema desde cualquier navegador moderno (Chrome, Edge o Firefox) conectado a la red interna de PROMESE/CAL.</p>
+
+      <ol class="steps">
+        <li>
+          <strong>Ingrese a la URL del sistema</strong>
+          <span>Abra el navegador y escriba la dirección del servidor: <code>http://10.70.69.38</code></span>
+        </li>
+        <li>
+          <strong>Ingrese sus credenciales</strong>
+          <span>Use su usuario de red (Active Directory / LDAP) y contraseña institucional. Si su cuenta aún no está habilitada, contacte al Administrador.</span>
+        </li>
+        <li>
+          <strong>Acceso al Dashboard</strong>
+          <span>Tras autenticarse, será redirigido automáticamente al tablero principal según su rol asignado.</span>
+        </li>
+      </ol>
+
+      <div class="callout warning">
+        <span class="callout-icon">⚠️</span>
+        <div>Si su cuenta aparece como <strong>"Pendiente de Acceso"</strong>, significa que un Administrador aún no ha asignado su rol. Contacte a TI para activar su perfil.</div>
+      </div>
+
+      <h3>Cierre de sesión</h3>
+      <p>Siempre cierre la sesión usando el botón <strong>🔓 Cerrar Sesión</strong> ubicado en la parte inferior del menú lateral. Nunca cierre simplemente la ventana del navegador en equipos compartidos.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 3 ─── -->
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Roles y Permisos</h2>
+      </div>
+      <p>SIGEDOC opera con <strong>4 roles principales</strong>. Cada usuario tiene un único rol que determina qué acciones puede realizar y qué documentos puede ver.</p>
+
+      <div class="roles-grid">
+        <div class="role-card role-admin">
+          <h4>👑 Administrador</h4>
+          <ul>
+            <li>Ver y gestionar todos los documentos</li>
+            <li>Aprobar y autorizar expedientes</li>
+            <li>Gestionar usuarios del sistema</li>
+            <li>Ver la bitácora completa</li>
+            <li>Configurar el sistema</li>
+            <li>Gestionar roles y permisos</li>
+          </ul>
+        </div>
+        <div class="role-card role-compras">
+          <h4>🛒 Compras</h4>
+          <ul>
+            <li>Ver todos los documentos SOLICITADOS</li>
+            <li>Aprobar expedientes (firma digital)</li>
+            <li>Devolver documentos con comentarios</li>
+            <li>Ver bitácora de movimientos</li>
+            <li>Ver trazabilidad del sistema</li>
+          </ul>
+        </div>
+        <div class="role-card role-gerencia">
+          <h4>🏢 Gerencia</h4>
+          <ul>
+            <li>Ver documentos APROBADO_COMPRAS</li>
+            <li>Autorizar definitivamente expedientes</li>
+            <li>Observar / Rechazar documentos</li>
+            <li>Ver trazabilidad del sistema</li>
+            <li>Ver bitácora de movimientos</li>
+          </ul>
+        </div>
+        <div class="role-card role-solicitante">
+          <h4>📝 Solicitante</h4>
+          <ul>
+            <li>Crear nuevas solicitudes</li>
+            <li>Ver solo sus propios documentos</li>
+            <li>Adjuntar documentos de soporte</li>
+            <li>Editar si el doc es devuelto/rechazado</li>
+            <li>Ver estado en tiempo real</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:24px">
+        <table>
+          <thead>
+            <tr>
+              <th>Acción</th>
+              <th>Admin</th>
+              <th>Compras</th>
+              <th>Gerencia</th>
+              <th>Solicitante</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Crear documentos</td><td>✅</td><td>❌</td><td>❌</td><td>✅</td></tr>
+            <tr><td>Ver todos los docs</td><td>✅</td><td>✅</td><td>✅</td><td>Solo propios</td></tr>
+            <tr><td>Aprobar (Compras)</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+            <tr><td>Autorizar (Gerencia)</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
+            <tr><td>Rechazar / Devolver</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+            <tr><td>Ver Bitácora</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+            <tr><td>Gestionar Usuarios</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+            <tr><td>Configuración</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 4 ─── -->
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Crear y Subir un Documento</h2>
+      </div>
+      <p>El proceso de creación de una solicitud lo realiza únicamente el usuario con rol <span class="badge badge-amber">Solicitante</span>. Siga los pasos a continuación:</p>
+
+      <ol class="steps">
+        <li>
+          <strong>Ir a Documentos → Crear</strong>
+          <span>En el menú lateral, haga clic en "Documentos" y luego en el botón verde "+ Nueva Solicitud".</span>
+        </li>
+        <li>
+          <strong>Completar el formulario</strong>
+          <span>Ingrese el <strong>Tipo de Solicitud</strong> (ej: Solicitud de Compra), la <strong>Descripción Operativa</strong> y seleccione la <strong>Prioridad</strong> (Baja / Normal / Alta / Crítica).</span>
+        </li>
+        <li>
+          <strong>Cargar el documento maestro</strong>
+          <span>Haga clic en el área de carga o arrastre el archivo PDF. El sistema acepta archivos de hasta <strong>100 MB</strong>.</span>
+        </li>
+        <li>
+          <strong>Adjuntar documentos de soporte (opcional)</strong>
+          <span>Si necesita incluir cotizaciones, especificaciones u otros archivos complementarios, use el botón "+ Agregar Adjunto".</span>
+        </li>
+        <li>
+          <strong>Enviar la solicitud</strong>
+          <span>Haga clic en <strong>"Crear y Enviar"</strong>. El sistema asignará un ID único (ej: SOL-2026-0018) y notificará automáticamente al equipo de Compras.</span>
+        </li>
+      </ol>
+
+      <div class="callout success">
+        <span class="callout-icon">✅</span>
+        <div>Tras enviar exitosamente, el documento pasa al estado <span class="badge badge-teal">SOLICITADO</span> y quedará en espera de revisión por Compras. Recibirá una notificación cuando haya un cambio de estado.</div>
+      </div>
+
+      <h3>Tipos de solicitud disponibles</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tipo</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td>Solicitud de Compra</td><td>Adquisición de bienes o servicios</td></tr>
+            <tr><td>Solicitud de Servicio</td><td>Contratación de servicios profesionales o técnicos</td></tr>
+            <tr><td>Solicitud de Materiales</td><td>Requerimiento de insumos o materiales internos</td></tr>
+            <tr><td>Solicitud de Viáticos</td><td>Autorización de gastos de viaje / representación</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warning">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Límites de archivo:</strong> Solo se aceptan archivos en formato <strong>PDF</strong>. El tamaño máximo por archivo es de <strong>100 MB</strong>. No incluya documentos con contraseña o permisos restringidos.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 5 ─── -->
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Ciclo de Aprobación</h2>
+      </div>
+      <p>Todo documento en SIGEDOC sigue un <strong>flujo de dos etapas</strong> antes de ser autorizado definitivamente. Este ciclo garantiza doble revisión y control interno.</p>
+
+      <div class="workflow">
+        <div class="wf-node active">
+          <div class="icon">📝</div>
+          <div class="label">Solicitado</div>
+          <div class="sub">Esperando Compras</div>
+        </div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-node active">
+          <div class="icon">✅</div>
+          <div class="label">Aprobado Compras</div>
+          <div class="sub">Esperando Gerencia</div>
+        </div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-node success-node">
+          <div class="icon">🏆</div>
+          <div class="label">Autorizado</div>
+          <div class="sub">Proceso finalizado</div>
+        </div>
+      </div>
+
+      <h3>5.1 Revisión por Compras</h3>
+      <p>Cuando un documento llega en estado <span class="badge badge-teal">SOLICITADO</span>, el equipo de Compras puede:</p>
+      <ul class="steps">
+        <li>
+          <strong>Aprobar y Firmar</strong>
+          <span>Al hacer clic en "Aprobar y Firmar", el sistema aplica una firma digital OpenSSL y cambia el estado a <span class="badge badge-amber">APROBADO_COMPRAS</span>. Gerencia recibirá una notificación automática.</span>
+        </li>
+        <li>
+          <strong>Devolver a Revisión</strong>
+          <span>Si el documento tiene observaciones, Compras puede devolverlo al Solicitante con un comentario explicativo. El estado vuelve a <span class="badge badge-teal">SOLICITADO</span> y el Solicitante recibe notificación para corregir.</span>
+        </li>
+      </ul>
+
+      <h3>5.2 Autorización por Gerencia</h3>
+      <p>Cuando un documento está en estado <span class="badge badge-amber">APROBADO_COMPRAS</span>, Gerencia puede:</p>
+      <ul class="steps">
+        <li>
+          <strong>Autorizar Definitivamente</strong>
+          <span>El documento pasa a estado <span class="badge badge-green">AUTORIZADO</span> y el proceso finaliza. Todas las partes reciben notificación de cierre.</span>
+        </li>
+        <li>
+          <strong>Observar / Rechazar</strong>
+          <span>Gerencia puede rechazar el documento con un motivo detallado. El estado cambia a <span class="badge badge-red">RECHAZADO</span> y el Solicitante puede corregir y reenviar.</span>
+        </li>
+      </ul>
+
+      <h3>5.3 Estados del Documento</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Estado</th><th>Descripción</th><th>Quién actúa</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-blue">SOLICITADO</span></td><td>Recién creado, en espera de revisión</td><td>Compras</td></tr>
+            <tr><td><span class="badge badge-amber">APROBADO_COMPRAS</span></td><td>Aprobado con firma digital, en espera de Gerencia</td><td>Gerencia</td></tr>
+            <tr><td><span class="badge badge-green">AUTORIZADO</span></td><td>Proceso completo y cerrado</td><td>—</td></tr>
+            <tr><td><span class="badge badge-red">RECHAZADO</span></td><td>Observado o rechazado con comentario</td><td>Solicitante</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 6 ─── -->
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Trazabilidad de Documentos</h2>
+      </div>
+      <p>SIGEDOC registra <strong>cada movimiento</strong> de un expediente: quién lo creó, quién lo revisó, qué comentarios dejó, cuándo se aprobó y cuándo se autorizó. Esta información está disponible en dos lugares:</p>
+
+      <h3>6.1 Línea de Vida (dentro del expediente)</h3>
+      <p>Al abrir cualquier documento desde <strong>Documentos → Ver</strong>, encontrará en el panel derecho la sección <strong>"Línea de Vida del Expediente"</strong>. Muestra un timeline cronológico con:</p>
+      <ul style="margin:12px 0 12px 20px; color:#374151; font-size:13px;">
+        <li style="margin-bottom:6px">🟢 El tipo de acción (CREACIÓN, APROBACIÓN, RECHAZO, CORRECCIÓN)</li>
+        <li style="margin-bottom:6px">👤 El usuario que realizó la acción y su departamento</li>
+        <li style="margin-bottom:6px">🕐 La fecha y hora del movimiento</li>
+        <li style="margin-bottom:6px">💬 Comentarios o detalles del movimiento</li>
+      </ul>
+
+      <h3>6.2 Vista General de Seguimiento</h3>
+      <p>Desde el menú <strong>Seguimiento</strong>, todos los usuarios autorizados pueden ver el estado de <em>todos</em> los expedientes del sistema en una sola pantalla. Las tarjetas muestran:</p>
+      <ul style="margin:12px 0 12px 20px; color:#374151; font-size:13px;">
+        <li style="margin-bottom:6px">📋 ID del expediente y descripción</li>
+        <li style="margin-bottom:6px">🕐 Tiempo total en proceso</li>
+        <li style="margin-bottom:6px">📍 Departamento solicitante</li>
+        <li style="margin-bottom:6px">🔵 Estado actual con indicador visual animado (activo) o estático (finalizado)</li>
+      </ul>
+      <p>Al hacer clic en una tarjeta, se expande mostrando el <strong>recorrido completo</strong> del expediente y los datos detallados del registro.</p>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>Use los filtros <strong>Todos / En Proceso / Finalizados</strong> y el buscador para localizar rápidamente cualquier expediente por ID, descripción o nombre del solicitante.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 7 ─── -->
+    <div class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>Notificaciones</h2>
+      </div>
+      <p>SIGEDOC cuenta con un sistema de notificaciones en <strong>dos canales</strong>: el panel interno de la aplicación y las notificaciones nativas del sistema operativo (Windows).</p>
+
+      <h3>7.1 Panel de Notificaciones (Campana)</h3>
+      <p>En la barra lateral, encontrará el ícono 🔔 <strong>Notificaciones</strong>. Al hacer clic verá:</p>
+      <ul style="margin:12px 0 12px 20px; color:#374151; font-size:13px;">
+        <li style="margin-bottom:6px">Lista de notificaciones recientes con título, mensaje y tiempo transcurrido</li>
+        <li style="margin-bottom:6px">Punto rojo animado en notificaciones no leídas</li>
+        <li style="margin-bottom:6px">Badge numérico en el ícono de campana con el total de no leídas</li>
+        <li style="margin-bottom:6px">Botón "Marcar leídas" para limpiar todas las notificaciones de una vez</li>
+      </ul>
+
+      <h3>7.2 Notificaciones de Windows (Push)</h3>
+      <p>La primera vez que inicie sesión, el navegador pedirá <strong>permiso para mostrar notificaciones</strong>. Al otorgarlo, recibirá alertas emergentes en la esquina de la pantalla cada vez que:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Evento</th><th>Quién recibe la notificación</th></tr></thead>
+          <tbody>
+            <tr><td>Nueva solicitud creada</td><td>Compras + Administradores</td></tr>
+            <tr><td>Documento aprobado por Compras</td><td>Solicitante + Gerencia + Administradores</td></tr>
+            <tr><td>Documento autorizado por Gerencia</td><td>Solicitante + Compras + Administradores</td></tr>
+            <tr><td>Documento devuelto/rechazado</td><td>Solicitante</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout success">
+        <span class="callout-icon">✅</span>
+        <div>El sistema verifica hay notificaciones nuevas <strong>cada 30 segundos</strong> automáticamente. No es necesario recargar la página para recibir actualizaciones.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 8 ─── -->
+    <div class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Administración del Sistema</h2>
+      </div>
+
+      <h3>8.1 Gestión de Usuarios</h3>
+      <p>Disponible solo para el rol <span class="badge badge-red">Administrador</span> desde el menú <strong>Usuarios</strong>. Permite:</p>
+      <ul style="margin:12px 0 12px 20px; color:#374151; font-size:13px;">
+        <li style="margin-bottom:6px">Ver todos los usuarios registrados y su estado</li>
+        <li style="margin-bottom:6px">Aprobar nuevos registros de acceso</li>
+        <li style="margin-bottom:6px">Cambiar el rol de un usuario</li>
+        <li style="margin-bottom:6px">Activar o desactivar cuentas</li>
+        <li style="margin-bottom:6px">Sincronizar con Active Directory (LDAP)</li>
+      </ul>
+
+      <h3>8.2 Bitácora del Sistema</h3>
+      <p>La <strong>Bitácora</strong> registra todas las acciones críticas del sistema con marca de tiempo, usuario, acción y datos anteriores/nuevos. Es una auditoría completa e inmutable.</p>
+
+      <h3>8.3 Configuración General</h3>
+      <p>Desde <strong>Configuración</strong>, el Administrador puede ajustar parámetros del sistema como nombre de la institución, correo de contacto y otras configuraciones operativas.</p>
+
+      <h3>8.4 Permisos y Seguridad</h3>
+      <p>La sección <strong>Permisos</strong> muestra la matriz completa de permisos para cada rol. Permite activar o desactivar capacidades específicas por rol, excepto el rol Administrador que siempre mantiene todos los permisos por seguridad.</p>
+
+      <div class="callout danger">
+        <span class="callout-icon">🛑</span>
+        <div>El rol <strong>Administrador</strong> nunca puede perder sus permisos desde la interfaz para evitar bloquear el acceso total al sistema. Cualquier cambio en la matriz de permisos es registrado en la Bitácora.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 9 ─── -->
+    <div class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Límites y Configuración Técnica</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parámetro</th><th>Valor configurado</th><th>Ubicación</th></tr></thead>
+          <tbody>
+            <tr><td>Tamaño máximo de archivo</td><td><strong>100 MB</strong></td><td>DocumentoController.php + php.ini</td></tr>
+            <tr><td>Tamaño máximo de adjuntos</td><td><strong>100 MB</strong></td><td>DocumentoController.php</td></tr>
+            <tr><td>upload_max_filesize (PHP)</td><td><strong>100M</strong></td><td>php.ini servidor</td></tr>
+            <tr><td>post_max_size (PHP)</td><td><strong>110M</strong></td><td>php.ini servidor</td></tr>
+            <tr><td>memory_limit (PHP)</td><td><strong>512M</strong></td><td>php.ini servidor</td></tr>
+            <tr><td>Formatos aceptados</td><td><strong>PDF, JPG, PNG</strong></td><td>DocumentoController.php</td></tr>
+            <tr><td>Intervalo de polling notif.</td><td><strong>30 segundos</strong></td><td>notifications.js</td></tr>
+            <tr><td>Servidor de producción</td><td><strong>10.70.69.38</strong></td><td>Infraestructura</td></tr>
+            <tr><td>Base de datos</td><td><strong>SQL Server (sigedoc)</strong></td><td>config.php</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>Para subir archivos de producción al servidor, use <code>scp</code> y luego <code>sudo mv</code> con el usuario <code>mesahector</code>. Siempre asigne permisos <code>www-data:www-data</code> a los archivos copiados.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ─── SECCIÓN 10 ─── -->
+    <div class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>Preguntas Frecuentes</h2>
+      </div>
+
+      <h3>¿Por qué no veo el botón de Aprobar?</h3>
+      <p>El botón de Aprobar solo aparece cuando: (1) el documento está en estado <span class="badge badge-teal">SOLICITADO</span> y (2) usted tiene el rol <span class="badge badge-teal">Compras</span> o <span class="badge badge-red">Administrador</span>. Si no cumple ambas condiciones, el botón no se mostrará.</p>
+
+      <h3>¿Puedo editar un documento ya enviado?</h3>
+      <p>Solo si el documento está en estado <span class="badge badge-red">RECHAZADO</span> y usted es el propietario (quien lo creó). En ese caso, aparecerá el botón <strong>"Corregir y Reenviar"</strong>.</p>
+
+      <h3>¿Qué hago si el archivo no se sube?</h3>
+      <p>Verifique que: (1) el archivo sea PDF, (2) el tamaño sea menor a 100 MB, (3) el archivo no esté protegido con contraseña. Si el problema persiste, contacte a TI para revisar la configuración del servidor.</p>
+
+      <h3>¿Por qué las notificaciones de Windows no aparecen?</h3>
+      <p>El navegador debe tener permiso para mostrar notificaciones de este sitio. Vaya a la barra de direcciones → haga clic en el ícono de candado 🔒 → Configuración del sitio → Notificaciones → Permitir.</p>
+
+      <h3>¿Cómo busco un expediente específico?</h3>
+      <p>Desde <strong>Seguimiento</strong>, use el buscador en la parte superior para filtrar por ID del expediente, descripción o nombre del solicitante. También puede filtrar por estado en los botones de pestañas.</p>
+
+      <h3>¿Quién puede ver mis documentos?</h3>
+      <p>Como Solicitante, solo usted puede ver sus propios documentos. Compras, Gerencia y el Administrador pueden ver todos los documentos del sistema.</p>
+
+      <div class="callout success">
+        <span class="callout-icon">📞</span>
+        <div>Para soporte técnico, contacte al <strong>Departamento de Tecnología de la Información</strong> de PROMESE/CAL o al administrador del sistema SIGEDOC.</div>
+      </div>
+    </div>
+
+  </div><!-- /.content -->
+
+  <!-- FOOTER -->
+  <div class="manual-footer">
+    <strong>SIGEDOC — Sistema Integrado de Gestión Documental</strong><br>
+    PROMESE/CAL · Versión 2.0 · Marzo 2026 · Uso Interno — Documentación Confidencial
+  </div>
+
+</div><!-- /.page-wrapper -->
+
+</body>
+</html>

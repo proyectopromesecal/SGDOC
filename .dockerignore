@@ -1,0 +1,29 @@
+# Git
+.git
+.github
+.gitignore
+
+# Composer & Node dependencies
+vendor/
+node_modules/
+
+# Logs and system files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Development / Temporary files
+scratch/
+maintenance/
+Dockerfile
+docker-compose.yml
+README.md
+
+# Storage contents (do not bake documents/keys into the image)
+storage/documentos/*
+storage/keys/*
+storage/logs/*
+!storage/documentos/.gitkeep
+!storage/keys/.gitkeep
