@@ -1,5 +1,5 @@
 # SIGEDOC - Sistema de Gestión de Documentos
-## PROMESE/CAL — v2.2.6
+## PROMESE/CAL — v2.2.7
 
 Sistema modular de gestión del ciclo de vida de documentos con firma digital y flujo de aprobaciones departamentales.
 
